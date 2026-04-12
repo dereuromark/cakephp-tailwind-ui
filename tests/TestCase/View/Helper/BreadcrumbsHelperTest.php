@@ -84,7 +84,7 @@ class BreadcrumbsHelperTest extends TestCase
         $this->Breadcrumbs->add('Articles');
 
         $result = $this->Breadcrumbs->render();
-        $this->assertStringContainsString('flex items-center gap-1.5 text-sm', $result);
+        $this->assertStringContainsString('text-sm text-muted-foreground', $result);
         $this->assertStringContainsString('text-foreground font-medium', $result);
     }
 }
