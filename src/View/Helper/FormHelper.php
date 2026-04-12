@@ -60,9 +60,6 @@ class FormHelper extends CoreFormHelper
             $config['widgets'] = $this->_widgets + $config['widgets'];
         }
 
-        // Disable nested checkbox/radio so our custom templates work
-        $config['nestedCheckboxAndRadio'] = $config['nestedCheckboxAndRadio'] ?? false;
-
         parent::__construct($view, $config);
 
         $this->setTemplates([
@@ -72,17 +69,18 @@ class FormHelper extends CoreFormHelper
             'inputContainerError' => '<div class="{{containerClass}}">{{content}}{{error}}{{help}}</div>',
             'checkboxContainer' => '<div class="{{containerClass}}">{{content}}{{help}}</div>',
             'checkboxContainerError' => '<div class="{{containerClass}}">{{content}}{{error}}{{help}}</div>',
-            'checkboxFormGroup' => '<div class="flex items-center gap-2 cursor-pointer">{{input}}{{label}}</div>',
+            'checkboxFormGroup' => '{{label}}',
+            'checkboxWrapper' => '<div class="mt-1 [&>label]:inline-flex [&>label]:items-center [&>label]:gap-2 [&>label]:cursor-pointer">{{label}}</div>',
             'radioContainer' => '<div class="{{containerClass}}" role="group" aria-labelledby="{{groupId}}">{{content}}{{help}}</div>',
             'radioContainerError' => '<div class="{{containerClass}}" role="group" aria-labelledby="{{groupId}}">{{content}}{{error}}{{help}}</div>',
-            'radioWrapper' => '<div class="flex items-center gap-2"><label class="flex items-center gap-2 cursor-pointer">{{hidden}}{{input}}<span class="{{labelClass}}">{{text}}</span></label></div>',
+            'radioWrapper' => '<div class="mt-1 [&>label]:inline-flex [&>label]:items-center [&>label]:gap-2 [&>label]:cursor-pointer">{{label}}</div>',
             'radioLabel' => '<label{{attrs}}>{{text}}</label>',
             'multicheckboxContainer' => '<div class="{{containerClass}}" role="group" aria-labelledby="{{groupId}}">{{content}}{{help}}</div>',
             'multicheckboxContainerError' => '<div class="{{containerClass}}" role="group" aria-labelledby="{{groupId}}">{{content}}{{error}}{{help}}</div>',
             'multicheckboxLabel' => '<label{{attrs}}>{{text}}</label>',
             'multicheckboxWrapper' => '<fieldset>{{content}}</fieldset>',
-            'multicheckboxTitle' => '<legend class="{{labelClass}} mb-2">{{text}}</legend>',
-            'nestingLabel' => '{{hidden}}{{input}}<label{{attrs}}>{{text}}</label>',
+            'multicheckboxTitle' => '<legend class="{{labelClass}} mb-2 block">{{text}}</legend>',
+            'nestingLabel' => '{{hidden}}<label{{attrs}}>{{input}} {{text}}</label>',
             'submitContainer' => '<div class="{{containerClass}}">{{content}}</div>',
         ]);
     }
@@ -151,10 +149,21 @@ class FormHelper extends CoreFormHelper
         $parsedOptions = $this->_parseOptions($fieldName, $options);
         $type = $parsedOptions['type'];
 
-        // Apply label class
-        $labelClass = $this->classMap('form.label');
-        if ($this->_align === static::ALIGN_HORIZONTAL) {
+        // Apply label class. Checkbox/radio/multicheckbox get a different class
+        // because their nesting label wraps the input and needs flex layout.
+        $isSingleCheckbox = $type === 'checkbox';
+        $isGroupInput = $type === 'radio' || $type === 'multicheckbox'
+            || ($type === 'select' && ($options['multiple'] ?? null) === 'checkbox');
+
+        if ($isSingleCheckbox) {
+            $labelClass = 'inline-flex items-center gap-2 cursor-pointer';
+        } elseif ($this->_align === static::ALIGN_HORIZONTAL) {
             $labelClass = $this->classMap('form.labelHorizontal');
+        } else {
+            $labelClass = $this->classMap('form.label');
+            if ($isGroupInput) {
+                $labelClass .= ' block mb-2';
+            }
         }
 
         // Inject label class

@@ -6,7 +6,6 @@
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%208.2-8892BF.svg)](https://php.net/)
 [![License](https://poser.pugx.org/dereuromark/cakephp-tailwind-ui/license.svg)](LICENSE)
 [![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-tailwind-ui/d/total.svg)](https://packagist.org/packages/dereuromark/cakephp-tailwind-ui)
-[![Coding Standards](https://img.shields.io/badge/cs-PSR--2--R-yellow.svg)](https://github.com/php-fig-rectified/fig-rectified-standards)
 
 Tailwind CSS / DaisyUI view helpers for CakePHP 5.2+. Drop-in replacement for Bootstrap-styled helpers — outputs Tailwind/DaisyUI markup instead.
 

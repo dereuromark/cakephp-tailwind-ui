@@ -1,5 +1,6 @@
 /vendor/
 /tmp/
+/docs/screenshots/
 .idea/
 composer.lock
 composer.phar
