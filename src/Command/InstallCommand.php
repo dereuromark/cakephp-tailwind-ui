@@ -1,0 +1,16 @@
+<?php
+declare(strict_types=1);
+
+namespace TailwindUi\Command;
+
+use Cake\Command\Command;
+use Cake\Console\Arguments;
+use Cake\Console\ConsoleIo;
+
+class InstallCommand extends Command
+{
+    public function execute(Arguments $args, ConsoleIo $io): ?int
+    {
+        return static::CODE_SUCCESS;
+    }
+}
