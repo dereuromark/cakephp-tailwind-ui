@@ -7,7 +7,8 @@
 [![License](https://poser.pugx.org/dereuromark/cakephp-tailwind-ui/license.svg)](LICENSE)
 [![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-tailwind-ui/d/total.svg)](https://packagist.org/packages/dereuromark/cakephp-tailwind-ui)
 
-Tailwind CSS / DaisyUI view helpers for CakePHP 5.2+. Drop-in replacement for Bootstrap-styled helpers — outputs Tailwind/DaisyUI markup instead.
+Tailwind CSS / DaisyUI view helpers for CakePHP 5.2+. 
+Drop-in replacement for Bootstrap-styled helpers — outputs Tailwind/DaisyUI markup instead.
 
 This plugin is the Tailwind equivalent of [bootstrap-ui](https://github.com/FriendsOfCake/bootstrap-ui).
 
