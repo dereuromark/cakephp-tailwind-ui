@@ -11,6 +11,17 @@ Tailwind CSS / DaisyUI view helpers for CakePHP 5.2+. Drop-in replacement for Bo
 
 This plugin is the Tailwind equivalent of [bootstrap-ui](https://github.com/FriendsOfCake/bootstrap-ui).
 
+## Preview
+
+`$this->Form->control()`, `$this->Paginator->links()`, `$this->Flash->render()`, and `$this->Html->badge()` rendered with the default DaisyUI preset:
+
+| | |
+|---|---|
+| ![Form controls](docs/screenshots/daisyui-forms.png) | ![Articles index](docs/screenshots/daisyui-articles-index.png) |
+| ![Buttons](docs/screenshots/daisyui-buttons.png) | ![Alerts](docs/screenshots/daisyui-alerts.png) |
+
+See [docs/](docs/README.md) for the full set of screenshots and documentation.
+
 ## Installation
 
 ```bash
@@ -81,4 +92,9 @@ Custom presets can be added by placing a PHP file in `config/class_maps/` that r
 
 ## Documentation
 
-For detailed documentation, see the [docs](/docs) folder.
+- [Installation](docs/installation.md)
+- [Class Map](docs/class-map.md)
+- [Helpers](docs/helpers.md)
+- [Presets](docs/presets.md) — DaisyUI, KTUI, custom
+- [Bake Theme](docs/bake.md)
+- [Screenshots](docs/README.md#screenshots)
