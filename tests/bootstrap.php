@@ -12,7 +12,9 @@ if (is_file('vendor/autoload.php')) {
     require_once dirname(__DIR__) . '/vendor/autoload.php';
 }
 
-define('DS', DIRECTORY_SEPARATOR);
+if (!defined('DS')) {
+    define('DS', DIRECTORY_SEPARATOR);
+}
 define('ROOT', dirname(__DIR__));
 define('APP_DIR', 'TestApp');
 define('WEBROOT_DIR', 'webroot');
