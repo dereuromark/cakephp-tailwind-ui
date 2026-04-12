@@ -4,8 +4,19 @@ declare(strict_types=1);
 
 namespace TailwindUi\View;
 
+use Cake\Core\Configure;
+
 trait UiViewTrait
 {
+    /**
+     * Register plugin helpers and (optionally) set a preset-appropriate layout.
+     *
+     * Accepted $options keys:
+     * - layout: true (default) to set a preset-appropriate layout, false to
+     *   keep the current layout, or a string to set a specific layout name.
+     *
+     * @param array<string, mixed> $options
+     */
     public function initializeUi(array $options = []): void
     {
         $helpers = [
@@ -20,7 +31,9 @@ trait UiViewTrait
         }
         $layout = $options['layout'] ?? true;
         if ($layout === true) {
-            $this->setLayout('TailwindUi.default');
+            $preset = Configure::read('TailwindUi.classMap');
+            $layoutName = $preset === 'ktui' ? 'TailwindUi.ktui' : 'TailwindUi.default';
+            $this->setLayout($layoutName);
         } elseif (is_string($layout)) {
             $this->setLayout($layout);
         }
