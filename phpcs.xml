@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ruleset name="plugin">
+<ruleset name="tailwind-ui">
 	<arg name="cache" value=".phpcs.cache"/>
 	<arg value="nps"/>
 
@@ -9,5 +9,15 @@
 
 	<exclude-pattern>/tests/test_app/</exclude-pattern>
 
-	<rule ref="PSR2R"/>
+	<rule ref="PhpCollective"/>
+
+	<rule ref="SlevomatCodingStandard.Functions.RequireTrailingCommaInDeclaration"/>
+	<rule ref="SlevomatCodingStandard.Functions.RequireTrailingCommaInClosureUse"/>
+
+	<rule ref="PSR2.Classes.PropertyDeclaration.Underscore">
+		<severity>0</severity>
+	</rule>
+	<rule ref="SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.NoAssignment">
+		<severity>0</severity>
+	</rule>
 </ruleset>

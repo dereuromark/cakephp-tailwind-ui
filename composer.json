@@ -29,7 +29,7 @@
 		"cakephp/cakephp": "^5.2"
 	},
 	"require-dev": {
-		"fig-r/psr2r-sniffer": "dev-master",
+		"php-collective/code-sniffer": "dev-master as 0.4.6",
 		"phpunit/phpunit": "^11.5 || ^12.1 || ^13.0"
 	},
 	"minimum-stability": "stable",

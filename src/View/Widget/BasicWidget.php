@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace TailwindUi\View\Widget;
@@ -6,12 +7,12 @@ namespace TailwindUi\View\Widget;
 use Cake\View\Form\ContextInterface;
 use Cake\View\Widget\BasicWidget as CoreBasicWidget;
 
-class BasicWidget extends CoreBasicWidget {
+class BasicWidget extends CoreBasicWidget
+{
+    use InputGroupTrait;
 
-	use InputGroupTrait;
-
-	public function render(array $data, ContextInterface $context): string {
-		return $this->_withInputGroup($data, $context);
-	}
-
+    public function render(array $data, ContextInterface $context): string
+    {
+        return $this->_withInputGroup($data, $context);
+    }
 }

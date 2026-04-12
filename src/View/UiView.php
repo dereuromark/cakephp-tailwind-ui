@@ -1,17 +1,18 @@
 <?php
+
 declare(strict_types=1);
 
 namespace TailwindUi\View;
 
 use Cake\View\View;
 
-class UiView extends View {
+class UiView extends View
+{
+    use UiViewTrait;
 
-	use UiViewTrait;
-
-	public function initialize(): void {
-		parent::initialize();
-		$this->initializeUi();
-	}
-
+    public function initialize(): void
+    {
+        parent::initialize();
+        $this->initializeUi();
+    }
 }
