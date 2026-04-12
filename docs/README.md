@@ -87,12 +87,17 @@ The same pages rendered with `Configure::write('TailwindUi.classMap', 'ktui')`.
 
 | Page | DaisyUI | KTUI |
 |---|---|---|
-| Forms | [daisyui-forms.png](screenshots/daisyui-forms.png) | [ktui-forms.png](screenshots/ktui-forms.png) |
+| Form controls | [daisyui-forms.png](screenshots/daisyui-forms.png) | [ktui-forms.png](screenshots/ktui-forms.png) |
 | Buttons | [daisyui-buttons.png](screenshots/daisyui-buttons.png) | [ktui-buttons.png](screenshots/ktui-buttons.png) |
+| Alerts | [daisyui-alerts.png](screenshots/daisyui-alerts.png) | [ktui-alerts.png](screenshots/ktui-alerts.png) |
 | Pagination | [daisyui-pagination.png](screenshots/daisyui-pagination.png) | [ktui-pagination.png](screenshots/ktui-pagination.png) |
+| Breadcrumbs | [daisyui-breadcrumbs.png](screenshots/daisyui-breadcrumbs.png) | [ktui-breadcrumbs.png](screenshots/ktui-breadcrumbs.png) |
+| Badges | [daisyui-badges.png](screenshots/daisyui-badges.png) | [ktui-badges.png](screenshots/ktui-badges.png) |
+| Cards | [daisyui-cards.png](screenshots/daisyui-cards.png) | [ktui-cards.png](screenshots/ktui-cards.png) |
+| Tables | [daisyui-tables.png](screenshots/daisyui-tables.png) | [ktui-tables.png](screenshots/ktui-tables.png) |
 | Users index | [daisyui-users-index.png](screenshots/daisyui-users-index.png) | [ktui-users-index.png](screenshots/ktui-users-index.png) |
 | Articles index | [daisyui-articles-index.png](screenshots/daisyui-articles-index.png) | [ktui-articles-index.png](screenshots/ktui-articles-index.png) |
-| Articles add | [daisyui-articles-add.png](screenshots/daisyui-articles-add.png) | [ktui-articles-add.png](screenshots/ktui-articles-add.png) |
+| Articles add form | [daisyui-articles-add.png](screenshots/daisyui-articles-add.png) | [ktui-articles-add.png](screenshots/ktui-articles-add.png) |
 
 ## Demo app
 
