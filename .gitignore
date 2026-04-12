@@ -1,3 +1,8 @@
 /vendor/
-/.phpunit.cache/
+/tmp/
+.idea/
 composer.lock
+composer.phar
+/.phpunit.result.cache
+/.phpunit.cache/
+.phpcs.cache

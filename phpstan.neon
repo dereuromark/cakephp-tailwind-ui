@@ -1,0 +1,11 @@
+parameters:
+	level: 8
+	paths:
+		- src/
+	bootstrapFiles:
+		- tests/bootstrap.php
+	treatPhpDocTypesAsCertain: false
+	ignoreErrors:
+		- identifier: missingType.iterableValue
+		- identifier: missingType.generics
+		- identifier: trait.unused

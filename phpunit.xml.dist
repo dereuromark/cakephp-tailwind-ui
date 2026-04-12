@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         colors="true" stopOnFailure="false" bootstrap="./tests/bootstrap.php"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.2/phpunit.xsd"
-         cacheDirectory=".phpunit.cache">
-    <testsuites>
-        <testsuite name="tailwind-ui">
-            <directory>tests/TestCase/</directory>
-        </testsuite>
-    </testsuites>
-    <source>
-        <include>
-            <directory suffix=".php">src/</directory>
-        </include>
-    </source>
+		 bootstrap="tests/bootstrap.php"
+		 colors="true"
+		 cacheDirectory=".phpunit.cache"
+		 xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.2/phpunit.xsd">
+	<php>
+		<ini name="error_reporting" value="32767"/>
+	</php>
+
+	<testsuites>
+		<testsuite name="tailwind-ui">
+			<directory>tests/TestCase/</directory>
+		</testsuite>
+	</testsuites>
+
+	<source>
+		<include>
+			<directory suffix=".php">src/</directory>
+		</include>
+	</source>
 </phpunit>
