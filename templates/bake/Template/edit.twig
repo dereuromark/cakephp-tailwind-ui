@@ -1,0 +1,33 @@
+<?php
+/**
+ * @var \{{ namespace }}\View\AppView $this
+ * @var \{{ entityClass }} ${{ singularVar }}
+{% for assoc in associations %}
+{% for subassoc in assoc %}
+ * @var \{{ namespace }}\Model\Entity\{{ subassoc.alias|singularize }}[]|\Cake\Collection\CollectionInterface ${{ subassoc.alias|variable }}
+{% endfor %}
+{% endfor %}
+ */
+?>
+{% set pK = '$' ~ singularVar ~ '->' ~ primaryKey[0] %}
+<?php
+$this->assign('title', __('Edit {{ singularHumanName }}'));
+$this->Breadcrumbs->add(__('Home'), '/');
+$this->Breadcrumbs->add(__('{{ pluralHumanName }}'), ['action' => 'index']);
+$this->Breadcrumbs->add(__('Edit {{ singularHumanName }}'));
+?>
+<div class="flex items-center justify-between mb-6">
+    <div>
+        <h1 class="text-2xl font-bold"><?= __('Edit {{ singularHumanName }}') ?></h1>
+        <?= $this->Breadcrumbs->render() ?>
+    </div>
+    <div class="flex gap-2">
+        <?= $this->Html->link(__('View'), ['action' => 'view', {{ pK|raw }}], ['class' => 'btn btn-ghost btn-sm']) ?>
+        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', {{ pK|raw }}], ['confirm' => __('Are you sure you want to delete # {0}?', ${{ singularVar }}->{{ primaryKey[0] }}), 'class' => 'btn btn-error btn-sm btn-outline', 'block' => true]) ?>
+        <?= $this->Html->link(__('Back'), ['action' => 'index'], ['class' => 'btn btn-ghost btn-sm']) ?>
+    </div>
+</div>
+
+{{ element('form') -}}
+
+<?= $this->fetch('postLink') ?>

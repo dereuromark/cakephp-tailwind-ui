@@ -1,0 +1,26 @@
+<?php
+/**
+ * @var \{{ namespace }}\View\AppView $this
+ * @var \{{ entityClass }} ${{ singularVar }}
+{% for assoc in associations %}
+{% for subassoc in assoc %}
+ * @var \{{ namespace }}\Model\Entity\{{ subassoc.alias|singularize }}[]|\Cake\Collection\CollectionInterface ${{ subassoc.alias|variable }}
+{% endfor %}
+{% endfor %}
+ */
+?>
+<?php
+$this->assign('title', __('Add {{ singularHumanName }}'));
+$this->Breadcrumbs->add(__('Home'), '/');
+$this->Breadcrumbs->add(__('{{ pluralHumanName }}'), ['action' => 'index']);
+$this->Breadcrumbs->add(__('Add {{ singularHumanName }}'));
+?>
+<div class="flex items-center justify-between mb-6">
+    <div>
+        <h1 class="text-2xl font-bold"><?= __('Add {{ singularHumanName }}') ?></h1>
+        <?= $this->Breadcrumbs->render() ?>
+    </div>
+    <?= $this->Html->link(__('Back'), ['action' => 'index'], ['class' => 'btn btn-ghost btn-sm']) ?>
+</div>
+
+{{ element('form') -}}
