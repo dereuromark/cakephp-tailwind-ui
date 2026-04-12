@@ -6,6 +6,7 @@ namespace TailwindUi\Test\TestCase\View\Widget;
 
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
+use Cake\View\Form\ContextInterface;
 use Cake\View\StringTemplate;
 use TailwindUi\View\Widget\BasicWidget;
 
@@ -13,16 +14,13 @@ class BasicWidgetTest extends TestCase
 {
     protected StringTemplate $templates;
 
-    /**
-     * @var \Cake\View\Form\ContextInterface&\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $context;
+    protected ContextInterface $context;
 
     public function setUp(): void
     {
         parent::setUp();
         $this->templates = new StringTemplate(['input' => '<input type="{{type}}" name="{{name}}"{{attrs}} />']);
-        $this->context = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
+        $this->context = $this->createStub(ContextInterface::class);
         Configure::delete('TailwindUi');
     }
 

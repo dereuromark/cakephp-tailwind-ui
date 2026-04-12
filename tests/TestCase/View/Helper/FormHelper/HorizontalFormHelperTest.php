@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace TailwindUi\Test\TestCase\View\Helper\FormHelper;
 
-class HorizontalFormHelperTest extends AbstractFormHelperTest
+class HorizontalFormHelperTest extends FormHelperTestCase
 {
     public function testHorizontalTextControl(): void
     {

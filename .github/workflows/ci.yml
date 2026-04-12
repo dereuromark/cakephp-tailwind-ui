@@ -5,15 +5,11 @@ on:
     branches:
       - master
   pull_request:
-    branches:
-      - '*'
-
-permissions:
-  contents: read
+  workflow_dispatch:
 
 jobs:
   testsuite:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -24,7 +20,7 @@ jobs:
             prefer-lowest: 'prefer-lowest'
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -33,34 +29,52 @@ jobs:
           extensions: mbstring, intl
           coverage: pcov
 
+      - name: Get composer cache directory
+        id: composercache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composercache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
+
       - name: Composer install
         run: |
-          if [[ ${{ matrix.prefer-lowest }} == 'prefer-lowest' ]]; then
-            composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction
+          composer --version
+          if ${{ matrix.prefer-lowest == 'prefer-lowest' }}
+          then
+            composer update --prefer-lowest --prefer-stable
+            composer require --dev dereuromark/composer-prefer-lowest:dev-master
           else
-            composer install --prefer-dist --no-interaction
+            composer install --no-progress --prefer-dist --optimize-autoloader
           fi
 
       - name: Run PHPUnit
         run: |
-          if [[ ${{ matrix.php-version }} == '8.4' && ${{ matrix.prefer-lowest }} != 'prefer-lowest' ]]; then
+          if [[ ${{ matrix.php-version }} == '8.2' ]]; then
             vendor/bin/phpunit --coverage-clover=coverage.xml
           else
             vendor/bin/phpunit
           fi
 
-      - name: Upload coverage
-        if: matrix.php-version == '8.4' && matrix.prefer-lowest != 'prefer-lowest'
-        uses: codecov/codecov-action@v4
+      - name: Validate prefer-lowest
+        if: matrix.prefer-lowest == 'prefer-lowest'
+        run: vendor/bin/validate-prefer-lowest -m
+
+      - name: Upload coverage reports to Codecov
+        if: success() && matrix.php-version == '8.2' && matrix.prefer-lowest != 'prefer-lowest'
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   validation:
-    name: Coding Standards & Static Analysis
-    runs-on: ubuntu-22.04
+    name: Coding Standard & Static Analysis
+    runs-on: ubuntu-24.04
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -69,11 +83,22 @@ jobs:
           extensions: mbstring, intl
           coverage: none
 
-      - name: Composer install
-        run: composer install --prefer-dist --no-interaction
+      - name: Get composer cache directory
+        id: composercache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composercache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Composer Setup
+        run: composer stan-setup
 
       - name: Run phpstan
-        run: composer stan-setup && composer stan
+        run: vendor/bin/phpstan analyze --error-format=github
 
       - name: Run phpcs
         run: composer cs-check

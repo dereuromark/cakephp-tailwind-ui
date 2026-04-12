@@ -7,7 +7,7 @@ namespace TailwindUi\Test\TestCase\View\Helper\FormHelper;
 use Cake\Core\Configure;
 use TailwindUi\View\Helper\FormHelper;
 
-class DefaultFormHelperTest extends AbstractFormHelperTest
+class DefaultFormHelperTest extends FormHelperTestCase
 {
     public function testTextControl(): void
     {

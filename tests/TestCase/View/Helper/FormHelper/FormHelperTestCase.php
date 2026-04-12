@@ -12,7 +12,7 @@ use Cake\Utility\Security;
 use Cake\View\View;
 use TailwindUi\View\Helper\FormHelper;
 
-abstract class AbstractFormHelperTest extends TestCase
+abstract class FormHelperTestCase extends TestCase
 {
     protected View $View;
 
