@@ -7,13 +7,14 @@ use Cake\View\Form\ContextInterface;
 use Cake\View\Widget\ButtonWidget as CoreButtonWidget;
 use TailwindUi\View\Helper\OptionsAwareTrait;
 
-class ButtonWidget extends CoreButtonWidget
-{
-    use OptionsAwareTrait;
+class ButtonWidget extends CoreButtonWidget {
 
-    public function render(array $data, ContextInterface $context): string
-    {
-        $data = $this->applyButtonClasses($data);
-        return parent::render($data, $context);
-    }
+	use OptionsAwareTrait;
+
+	public function render(array $data, ContextInterface $context): string {
+		$data = $this->applyButtonClasses($data);
+
+		return parent::render($data, $context);
+	}
+
 }

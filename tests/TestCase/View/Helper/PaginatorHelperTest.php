@@ -12,108 +12,104 @@ use Cake\TestSuite\TestCase;
 use Cake\View\View;
 use TailwindUi\View\Helper\PaginatorHelper;
 
-class PaginatorHelperTest extends TestCase
-{
-    protected View $View;
-    protected PaginatorHelper $Paginator;
+class PaginatorHelperTest extends TestCase {
 
-    public function setUp(): void
-    {
-        parent::setUp();
-        Configure::delete('TailwindUi');
+	protected View $View;
 
-        Router::reload();
-        $routeBuilder = Router::createRouteBuilder('/');
-        $routeBuilder->connect('/{controller}', ['action' => 'index']);
-        $routeBuilder->connect('/{controller}/{action}/*');
+	protected PaginatorHelper $Paginator;
 
-        $request = new ServerRequest([
-            'webroot' => '',
-            'base' => '',
-            'url' => '/articles/index',
-            'params' => ['controller' => 'Articles', 'action' => 'index', 'plugin' => null],
-        ]);
-        Router::setRequest($request);
+	public function setUp(): void {
+		parent::setUp();
+		Configure::delete('TailwindUi');
 
-        $this->View = new View($request);
-        $this->Paginator = new PaginatorHelper($this->View);
+		Router::reload();
+		$routeBuilder = Router::createRouteBuilder('/');
+		$routeBuilder->connect('/{controller}', ['action' => 'index']);
+		$routeBuilder->connect('/{controller}/{action}/*');
 
-        $paginated = new PaginatedResultSet(new ArrayObject(), [
-            'count' => 10,
-            'totalCount' => 100,
-            'perPage' => 10,
-            'pageCount' => 10,
-            'currentPage' => 2,
-            'hasPrevPage' => true,
-            'hasNextPage' => true,
-            'start' => 11,
-            'end' => 20,
-            'alias' => 'Articles',
-            'scope' => null,
-            'direction' => 'asc',
-            'sortDefault' => false,
-            'directionDefault' => false,
-            'completeSort' => [],
-            'limit' => 10,
-            'pages' => 10,
-        ]);
-        $this->Paginator->setPaginated($paginated);
-    }
+		$request = new ServerRequest([
+			'webroot' => '',
+			'base' => '',
+			'url' => '/articles/index',
+			'params' => ['controller' => 'Articles', 'action' => 'index', 'plugin' => null],
+		]);
+		Router::setRequest($request);
 
-    public function tearDown(): void
-    {
-        parent::tearDown();
-        Configure::delete('TailwindUi');
-        unset($this->Paginator, $this->View);
-    }
+		$this->View = new View($request);
+		$this->Paginator = new PaginatorHelper($this->View);
 
-    public function testContainerHasJoinClass(): void
-    {
-        $result = $this->Paginator->links();
-        $this->assertStringContainsString('class="join"', $result);
-    }
+		$paginated = new PaginatedResultSet(new ArrayObject(), [
+			'count' => 10,
+			'totalCount' => 100,
+			'perPage' => 10,
+			'pageCount' => 10,
+			'currentPage' => 2,
+			'hasPrevPage' => true,
+			'hasNextPage' => true,
+			'start' => 11,
+			'end' => 20,
+			'alias' => 'Articles',
+			'scope' => null,
+			'direction' => 'asc',
+			'sortDefault' => false,
+			'directionDefault' => false,
+			'completeSort' => [],
+			'limit' => 10,
+			'pages' => 10,
+		]);
+		$this->Paginator->setPaginated($paginated);
+	}
 
-    public function testItemsHaveJoinItemClass(): void
-    {
-        $result = $this->Paginator->links();
-        $this->assertStringContainsString('join-item btn btn-sm', $result);
-    }
+	public function tearDown(): void {
+		parent::tearDown();
+		Configure::delete('TailwindUi');
+		unset($this->Paginator, $this->View);
+	}
 
-    public function testActiveItemHasBtnActiveAndAriaCurrent(): void
-    {
-        $result = $this->Paginator->links();
-        $this->assertStringContainsString('btn-active', $result);
-        $this->assertStringContainsString('aria-current="page"', $result);
-    }
+	public function testContainerHasJoinClass(): void {
+		$result = $this->Paginator->links();
+		$this->assertStringContainsString('class="join"', $result);
+	}
 
-    public function testKtuiConfigContainerClass(): void
-    {
-        Configure::write('TailwindUi.classMap', 'ktui');
-        $this->Paginator = new PaginatorHelper($this->View);
+	public function testItemsHaveJoinItemClass(): void {
+		$result = $this->Paginator->links();
+		$this->assertStringContainsString('join-item btn btn-sm', $result);
+	}
 
-        $paginated = new PaginatedResultSet(new ArrayObject(), [
-            'count' => 10,
-            'totalCount' => 100,
-            'perPage' => 10,
-            'pageCount' => 10,
-            'currentPage' => 2,
-            'hasPrevPage' => true,
-            'hasNextPage' => true,
-            'start' => 11,
-            'end' => 20,
-            'alias' => 'Articles',
-            'scope' => null,
-            'direction' => 'asc',
-            'sortDefault' => false,
-            'directionDefault' => false,
-            'completeSort' => [],
-            'limit' => 10,
-            'pages' => 10,
-        ]);
-        $this->Paginator->setPaginated($paginated);
+	public function testActiveItemHasBtnActiveAndAriaCurrent(): void {
+		$result = $this->Paginator->links();
+		$this->assertStringContainsString('btn-active', $result);
+		$this->assertStringContainsString('aria-current="page"', $result);
+	}
 
-        $result = $this->Paginator->links();
-        $this->assertStringContainsString('class="flex items-center gap-1"', $result);
-        $this->assertStringContainsString('kt-btn kt-btn-sm kt-btn-outline', $result);
-    }
+	public function testKtuiConfigContainerClass(): void {
+		Configure::write('TailwindUi.classMap', 'ktui');
+		$this->Paginator = new PaginatorHelper($this->View);
+
+		$paginated = new PaginatedResultSet(new ArrayObject(), [
+			'count' => 10,
+			'totalCount' => 100,
+			'perPage' => 10,
+			'pageCount' => 10,
+			'currentPage' => 2,
+			'hasPrevPage' => true,
+			'hasNextPage' => true,
+			'start' => 11,
+			'end' => 20,
+			'alias' => 'Articles',
+			'scope' => null,
+			'direction' => 'asc',
+			'sortDefault' => false,
+			'directionDefault' => false,
+			'completeSort' => [],
+			'limit' => 10,
+			'pages' => 10,
+		]);
+		$this->Paginator->setPaginated($paginated);
+
+		$result = $this->Paginator->links();
+		$this->assertStringContainsString('class="flex items-center gap-1"', $result);
+		$this->assertStringContainsString('kt-btn kt-btn-sm kt-btn-outline', $result);
+	}
+
 }

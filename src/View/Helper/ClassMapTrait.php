@@ -6,42 +6,41 @@ namespace TailwindUi\View\Helper;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 
-trait ClassMapTrait
-{
-    protected array $_classMap = [];
+trait ClassMapTrait {
 
-    protected function initClassMap(): void
-    {
-        if ($this->_classMap) {
-            return;
-        }
+	protected array $_classMap = [];
 
-        $pluginPath = Plugin::path('TailwindUi');
-        $base = include $pluginPath . 'config/class_maps/daisyui.php';
+	protected function initClassMap(): void {
+		if ($this->_classMap) {
+			return;
+		}
 
-        $configured = Configure::read('TailwindUi.classMap');
-        if (is_string($configured)) {
-            $presetFile = $pluginPath . 'config/class_maps/' . $configured . '.php';
-            if (file_exists($presetFile)) {
-                $preset = include $presetFile;
-                $base = array_merge($base, $preset);
-            }
-        } elseif (is_array($configured)) {
-            $base = array_merge($base, $configured);
-        }
+		$pluginPath = Plugin::path('TailwindUi');
+		$base = include $pluginPath . 'config/class_maps/daisyui.php';
 
-        $overrides = Configure::read('TailwindUi.classMapOverrides');
-        if (is_array($overrides)) {
-            $base = array_merge($base, $overrides);
-        }
+		$configured = Configure::read('TailwindUi.classMap');
+		if (is_string($configured)) {
+			$presetFile = $pluginPath . 'config/class_maps/' . $configured . '.php';
+			if (file_exists($presetFile)) {
+				$preset = include $presetFile;
+				$base = array_merge($base, $preset);
+			}
+		} elseif (is_array($configured)) {
+			$base = array_merge($base, $configured);
+		}
 
-        $this->_classMap = $base;
-    }
+		$overrides = Configure::read('TailwindUi.classMapOverrides');
+		if (is_array($overrides)) {
+			$base = array_merge($base, $overrides);
+		}
 
-    protected function classMap(string $key): string
-    {
-        $this->initClassMap();
+		$this->_classMap = $base;
+	}
 
-        return $this->_classMap[$key] ?? '';
-    }
+	protected function classMap(string $key): string {
+		$this->initClassMap();
+
+		return $this->_classMap[$key] ?? '';
+	}
+
 }

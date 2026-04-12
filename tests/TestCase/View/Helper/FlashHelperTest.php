@@ -10,108 +10,104 @@ use Cake\TestSuite\TestCase;
 use Cake\View\View;
 use TailwindUi\View\Helper\FlashHelper;
 
-class FlashHelperTest extends TestCase
-{
-    protected View $View;
-    protected FlashHelper $Flash;
-    protected Session $Session;
+class FlashHelperTest extends TestCase {
 
-    public function setUp(): void
-    {
-        parent::setUp();
-        Configure::delete('TailwindUi');
+	protected View $View;
 
-        $this->Session = new Session();
+	protected FlashHelper $Flash;
 
-        $request = new ServerRequest([
-            'webroot' => '',
-            'base' => '',
-            'url' => '/articles/index',
-            'params' => ['controller' => 'Articles', 'action' => 'index', 'plugin' => null],
-            'session' => $this->Session,
-        ]);
-        $this->View = new View($request);
-        $this->View->loadHelper('Html', ['className' => 'TailwindUi.Html']);
-        $this->Flash = new FlashHelper($this->View);
-    }
+	protected Session $Session;
 
-    public function tearDown(): void
-    {
-        parent::tearDown();
-        Configure::delete('TailwindUi');
-        unset($this->Flash, $this->View, $this->Session);
-    }
+	public function setUp(): void {
+		parent::setUp();
+		Configure::delete('TailwindUi');
 
-    public function testRenderReturnsNullWhenNoMessages(): void
-    {
-        $result = $this->Flash->render();
-        $this->assertNull($result);
-    }
+		$this->Session = new Session();
 
-    public function testRenderSuccess(): void
-    {
-        $this->Session->write('Flash.flash', [
-            [
-                'message' => 'Item saved successfully.',
-                'key' => 'flash',
-                'element' => 'TailwindUi.flash/default',
-                'params' => ['type' => 'success'],
-            ],
-        ]);
+		$request = new ServerRequest([
+			'webroot' => '',
+			'base' => '',
+			'url' => '/articles/index',
+			'params' => ['controller' => 'Articles', 'action' => 'index', 'plugin' => null],
+			'session' => $this->Session,
+		]);
+		$this->View = new View($request);
+		$this->View->loadHelper('Html', ['className' => 'TailwindUi.Html']);
+		$this->Flash = new FlashHelper($this->View);
+	}
 
-        $result = $this->Flash->render();
-        $this->assertNotNull($result);
-        $this->assertStringContainsString('alert', $result);
-        $this->assertStringContainsString('alert-success', $result);
-        $this->assertStringContainsString('Item saved successfully.', $result);
-    }
+	public function tearDown(): void {
+		parent::tearDown();
+		Configure::delete('TailwindUi');
+		unset($this->Flash, $this->View, $this->Session);
+	}
 
-    public function testRenderError(): void
-    {
-        $this->Session->write('Flash.flash', [
-            [
-                'message' => 'Something went wrong.',
-                'key' => 'flash',
-                'element' => 'TailwindUi.flash/default',
-                'params' => ['type' => 'error'],
-            ],
-        ]);
+	public function testRenderReturnsNullWhenNoMessages(): void {
+		$result = $this->Flash->render();
+		$this->assertNull($result);
+	}
 
-        $result = $this->Flash->render();
-        $this->assertNotNull($result);
-        $this->assertStringContainsString('alert-error', $result);
-        $this->assertStringContainsString('Something went wrong.', $result);
-    }
+	public function testRenderSuccess(): void {
+		$this->Session->write('Flash.flash', [
+			[
+				'message' => 'Item saved successfully.',
+				'key' => 'flash',
+				'element' => 'TailwindUi.flash/default',
+				'params' => ['type' => 'success'],
+			],
+		]);
 
-    public function testRenderClearsSession(): void
-    {
-        $this->Session->write('Flash.flash', [
-            [
-                'message' => 'Test.',
-                'key' => 'flash',
-                'element' => 'TailwindUi.flash/default',
-                'params' => ['type' => 'default'],
-            ],
-        ]);
+		$result = $this->Flash->render();
+		$this->assertNotNull($result);
+		$this->assertStringContainsString('alert', $result);
+		$this->assertStringContainsString('alert-success', $result);
+		$this->assertStringContainsString('Item saved successfully.', $result);
+	}
 
-        $this->Flash->render();
-        $this->assertNull($this->Session->read('Flash.flash'));
-    }
+	public function testRenderError(): void {
+		$this->Session->write('Flash.flash', [
+			[
+				'message' => 'Something went wrong.',
+				'key' => 'flash',
+				'element' => 'TailwindUi.flash/default',
+				'params' => ['type' => 'error'],
+			],
+		]);
 
-    public function testRenderEscapesHtml(): void
-    {
-        $this->Session->write('Flash.flash', [
-            [
-                'message' => '<script>alert("xss")</script>',
-                'key' => 'flash',
-                'element' => 'TailwindUi.flash/default',
-                'params' => ['type' => 'info'],
-            ],
-        ]);
+		$result = $this->Flash->render();
+		$this->assertNotNull($result);
+		$this->assertStringContainsString('alert-error', $result);
+		$this->assertStringContainsString('Something went wrong.', $result);
+	}
 
-        $result = $this->Flash->render();
-        $this->assertNotNull($result);
-        $this->assertStringNotContainsString('<script>', $result);
-        $this->assertStringContainsString('&lt;script&gt;', $result);
-    }
+	public function testRenderClearsSession(): void {
+		$this->Session->write('Flash.flash', [
+			[
+				'message' => 'Test.',
+				'key' => 'flash',
+				'element' => 'TailwindUi.flash/default',
+				'params' => ['type' => 'default'],
+			],
+		]);
+
+		$this->Flash->render();
+		$this->assertNull($this->Session->read('Flash.flash'));
+	}
+
+	public function testRenderEscapesHtml(): void {
+		$this->Session->write('Flash.flash', [
+			[
+				'message' => '<script>alert("xss")</script>',
+				'key' => 'flash',
+				'element' => 'TailwindUi.flash/default',
+				'params' => ['type' => 'info'],
+			],
+		]);
+
+		$result = $this->Flash->render();
+		$this->assertNotNull($result);
+		$this->assertStringNotContainsString('<script>', $result);
+		$this->assertStringContainsString('&lt;script&gt;', $result);
+	}
+
 }

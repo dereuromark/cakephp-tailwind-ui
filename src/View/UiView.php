@@ -5,13 +5,13 @@ namespace TailwindUi\View;
 
 use Cake\View\View;
 
-class UiView extends View
-{
-    use UiViewTrait;
+class UiView extends View {
 
-    public function initialize(): void
-    {
-        parent::initialize();
-        $this->initializeUi();
-    }
+	use UiViewTrait;
+
+	public function initialize(): void {
+		parent::initialize();
+		$this->initializeUi();
+	}
+
 }
