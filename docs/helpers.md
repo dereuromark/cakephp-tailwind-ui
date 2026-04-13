@@ -130,6 +130,11 @@ inline `<span>` for the label text. A placeholder is automatically set
 or you can supply your own. Supported on text-style inputs, selects, and
 textareas; ignored for checkbox/radio. Class map key: `form.floatingLabel`.
 
+`'floating' => true` is also a no-op in inline alignment mode (floating
+labels need vertical headroom and `sr-only` labels can't host visible
+floating text) and on the KTUI preset (KTUI has no floating-label
+component, so the option silently degrades to normal rendering).
+
 ### Rating
 
 ```php
@@ -151,6 +156,13 @@ container so it composes with the rest of the form. Options:
 Class map keys: `form.rating`, `form.ratingItem`, `form.ratingHidden`,
 `form.rating.{size}`. KTUI renders a fallback flex row of plain
 checkboxes — KTUI has no rating component natively.
+
+Out-of-range values are clamped: `value` greater than `max` highlights
+the highest star, negative `value` snaps to the empty radio. Field
+validation errors don't currently propagate onto rating inputs (the
+underlying widget bypasses CakePHP's standard error class injection);
+if you need a visible error state for a rating, render an error
+paragraph manually below it.
 
 ### Validation errors
 
