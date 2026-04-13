@@ -13,9 +13,9 @@ class DefaultFormHelperTest extends FormHelperTestCase
     {
         $this->Form->create($this->article);
         $result = $this->Form->control('title');
-        $this->assertStringContainsString('input input-bordered w-full', $result);
-        $this->assertStringContainsString('label-text', $result);
-        $this->assertStringContainsString('mb-4', $result);
+        $this->assertStringContainsString('input w-full', $result);
+        $this->assertStringContainsString('fieldset-legend', $result);
+        $this->assertStringContainsString('<fieldset class="fieldset"', $result);
         $this->assertStringContainsString('type="text"', $result);
     }
 
@@ -23,7 +23,8 @@ class DefaultFormHelperTest extends FormHelperTestCase
     {
         $this->Form->create($this->article);
         $result = $this->Form->control('status', ['options' => ['a' => 'Active', 'i' => 'Inactive']]);
-        $this->assertStringContainsString('select select-bordered w-full', $result);
+        $this->assertStringContainsString('select w-full', $result);
+        $this->assertStringContainsString('<fieldset class="fieldset"', $result);
     }
 
     public function testCheckboxControl(): void
@@ -45,7 +46,8 @@ class DefaultFormHelperTest extends FormHelperTestCase
     {
         $this->Form->create($this->article);
         $result = $this->Form->control('body');
-        $this->assertStringContainsString('textarea textarea-bordered w-full', $result);
+        $this->assertStringContainsString('textarea w-full', $result);
+        $this->assertStringContainsString('<fieldset class="fieldset"', $result);
     }
 
     public function testSubmitButton(): void
@@ -87,7 +89,8 @@ class DefaultFormHelperTest extends FormHelperTestCase
         $this->Form->create($this->article);
         $result = $this->Form->control('title', ['help' => 'Enter your title here']);
         $this->assertStringContainsString('Enter your title here', $result);
-        $this->assertStringContainsString('label-text-alt', $result);
+        $this->assertStringContainsString('<p id="title-help"', $result);
+        $this->assertStringContainsString('class="label text-base-content/60"', $result);
         $this->assertStringContainsString('aria-describedby', $result);
     }
 
@@ -95,7 +98,8 @@ class DefaultFormHelperTest extends FormHelperTestCase
     {
         $this->Form->create($this->article);
         $result = $this->Form->control('id');
-        $this->assertStringNotContainsString('input-bordered', $result);
+        $this->assertStringNotContainsString('class="input', $result);
+        $this->assertStringNotContainsString('<fieldset', $result);
     }
 
     public function testLabelFalse(): void

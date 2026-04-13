@@ -59,20 +59,28 @@ The full list of keys is in `config/class_maps/daisyui.php`. Summary:
 | `form.input` | `<input type="text|email|...">` class |
 | `form.select` | `<select>` class |
 | `form.textarea` | `<textarea>` class |
+| `form.input.xs` / `.sm` / `.md` / `.lg` / `.xl` | Input size variants (`['size' => 'lg']`) |
+| `form.select.xs` … `.xl` | Select size variants |
+| `form.textarea.xs` … `.xl` | Textarea size variants |
 | `form.checkbox` | `<input type="checkbox">` class |
 | `form.radio` | `<input type="radio">` class |
 | `form.switch` | `<input type="checkbox">` class when `'switch' => true` |
 | `form.file` | File input class |
 | `form.range` | Range input class |
-| `form.label` | Default field label class |
+| `form.label` | Default field label class (used on single checkboxes and KTUI forms) |
+| `form.fieldset` | Outer fieldset class in fieldset layout mode |
+| `form.fieldsetLegend` | Legend class in fieldset layout mode (empty string in KTUI) |
+| `form.helperLabel` | daisyUI helper-label class (used for help text paragraphs) |
+| `form.validator` | daisyUI 5 `validator` class added to inputs with errors |
 | `form.labelHorizontal` | Label class in horizontal layout |
 | `form.helpText` | Help text block class |
 | `form.error` | Validation error block class |
 | `form.inputError` | Class added to input when field has error |
 | `form.selectError` | Class added to select when field has error |
 | `form.textareaError` | Class added to textarea when field has error |
-| `form.container` | Container class for each control in vertical layout |
+| `form.container` | Container class for each control in vertical (non-fieldset) layout |
 | `form.containerHorizontal` | Container class for each control in horizontal layout |
+| `form.checkboxLabelWrapper` | Wrapper class for the single-checkbox label row |
 | `form.inputGroupContainer` | Wrapper class when prepend/append is used |
 | `form.inputGroupText` | Addon (prepend/append) class |
 
@@ -149,22 +157,62 @@ Same stacking rules as buttons: colors + modifiers compose, the default
 
 `card`, `card.header`, `card.body`, `card.footer`, `card.title`, `table`.
 
-## Adding a custom preset
+## Preset file format
 
-Create `config/class_maps/mypreset.php` in the plugin directory (or in your
-app if you use a loader). The file must return an array mapping keys to
-class strings. Any keys you don't set fall back to the DaisyUI defaults.
+Presets may return either the legacy flat class-map array:
 
 ```php
-// config/class_maps/mypreset.php
 return [
     'form.input' => 'my-input',
     'btn' => 'my-btn',
-    // ...
 ];
 ```
 
-Activate it:
+…or the extended nested shape, which also allows overriding FormHelper's
+container templates:
+
+```php
+return [
+    'classMap' => [
+        'form.input' => 'my-input',
+        'btn' => 'my-btn',
+    ],
+    'templates' => [
+        'inputContainer' => '<fieldset class="{{fieldsetClass}}">{{content}}{{help}}</fieldset>',
+        'inputContainerError' => '<fieldset class="{{fieldsetClass}}">{{content}}{{error}}{{help}}</fieldset>',
+        'label' => '<legend{{attrs}}>{{text}}</legend>',
+        'inputHelp' => '<p class="{{helperClass}}">{{text}}</p>',
+    ],
+];
+```
+
+Both shapes are auto-detected. Use the nested shape when your framework's
+form idiom requires different wrapper markup (e.g. daisyUI 5 uses
+`<fieldset>` and `<legend>`, KTUI uses plain `<div>` and `<label>`).
+
+Template overrides are **ignored in horizontal alignment mode** —
+horizontal layout always uses the plugin's built-in div-based templates
+because `<legend>` doesn't compose with a two-column flex layout.
+
+### Available form template keys
+
+| Key | Used for |
+|---|---|
+| `inputContainer` / `inputContainerError` | wrapper around text/select/textarea/file/date |
+| `radioContainer` / `radioContainerError` | wrapper around radio groups |
+| `multicheckboxContainer` / `multicheckboxContainerError` | wrapper around multicheckbox groups |
+| `label` | the label element rendered before the input (becomes `<legend>` in fieldset mode) |
+| `inputHelp` | the help-text fragment rendered inside the container |
+
+Available placeholders inside container templates: `{{content}}`,
+`{{help}}`, `{{error}}`, `{{containerClass}}`, `{{fieldsetClass}}`,
+`{{groupId}}`, `{{errorClass}}`.
+
+## Adding a custom preset
+
+Create `config/class_maps/mypreset.php` in the plugin directory (or in your
+app if you use a loader). Any keys you don't set fall back to the DaisyUI
+defaults. Activate it:
 
 ```php
 Configure::write('TailwindUi.classMap', 'mypreset');

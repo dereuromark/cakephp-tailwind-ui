@@ -28,9 +28,16 @@ class ClassMapTraitTest extends TestCase
 
     public function testDefaultDaisyuiMap(): void
     {
-        $this->assertSame('input input-bordered w-full', $this->subject->get('form.input'));
+        $this->assertSame('input w-full', $this->subject->get('form.input'));
         $this->assertSame('btn', $this->subject->get('btn'));
         $this->assertSame('alert', $this->subject->get('alert'));
+    }
+
+    public function testFieldsetKeysOnDaisyui(): void
+    {
+        $this->assertSame('fieldset', $this->subject->get('form.fieldset'));
+        $this->assertSame('fieldset-legend', $this->subject->get('form.fieldsetLegend'));
+        $this->assertSame('validator', $this->subject->get('form.validator'));
     }
 
     public function testUnknownKeyReturnsEmpty(): void
