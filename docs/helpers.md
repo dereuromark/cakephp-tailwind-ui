@@ -34,14 +34,22 @@ KTUI has no `fieldset-legend` equivalent.
 ### Alignment
 
 ```php
-$this->Form->create($article);                        // vertical, fieldset wrapper
+$this->Form->create($article);                              // vertical, fieldset wrapper
 $this->Form->create($article, ['align' => 'horizontal']);  // div wrapper, flex row
+$this->Form->create($article, ['align' => 'inline']);     // search/filter bar layout
 ```
 
 Horizontal layout keeps the `<div>` wrapper from `form.containerHorizontal`
 and a fixed-width label from `form.labelHorizontal`. Fieldsets are
 disabled in horizontal mode because a `<legend>` doesn't compose with
 the two-column flex layout.
+
+Inline layout wraps all controls in a single
+`<div class="flex flex-wrap items-end gap-3 mb-4">` (from
+`form.inlineWrapper`), hides each label as `sr-only` (still readable
+by screen readers), and suppresses help text. Intended for search
+bars and filter rows. Widths are user-controlled — pass
+`['class' => 'w-48']` or similar on each control to size them.
 
 ### Every CakePHP input type
 
@@ -83,12 +91,31 @@ Rendered inside the fieldset as `<p class="label text-base-content/60">`
 $this->Form->control('title', ['size' => 'lg']);
 $this->Form->control('status', ['options' => [...], 'size' => 'sm']);
 $this->Form->control('body', ['size' => 'xl']);
+$this->Form->control('published', ['size' => 'lg']);                       // checkbox
+$this->Form->control('role', ['type' => 'radio', 'options' => [...], 'size' => 'sm']);
+$this->Form->control('active', ['switch' => true, 'size' => 'lg']);
+$this->Form->control('avatar', ['type' => 'file', 'size' => 'lg']);
 ```
 
-Injects the daisyUI size modifier (`input-lg`, `select-sm`, `textarea-xl`)
-via the `form.input.{size}` / `form.select.{size}` / `form.textarea.{size}`
-class map keys. Unmapped sizes (e.g. KTUI has no size equivalents) are
-silently ignored.
+Injects the daisyUI size modifier (`input-lg`, `select-sm`, `textarea-xl`,
+`checkbox-lg`, `radio-sm`, `toggle-lg`, `file-input-lg`) via the
+`form.{type}.{size}` class map keys. Available sizes: `xs`, `sm`, `md`,
+`lg`, `xl`. Unmapped combinations (e.g. KTUI has no size equivalents
+for inputs) are silently ignored.
+
+### Color variants
+
+```php
+$this->Form->control('active', ['switch' => true, 'color' => 'primary']);
+$this->Form->control('avatar', ['type' => 'file', 'color' => 'primary']);
+$this->Form->control('logo', ['type' => 'file', 'color' => 'ghost']);
+```
+
+Currently supported on switches and file inputs. Resolves to
+`form.switch.{color}` / `form.file.{color}` class map keys. Available
+names: `primary`, `secondary`, `neutral`, `accent`, `success`, `danger`
+(maps to `error`), `warning`, `info`. File inputs additionally support
+`ghost`.
 
 ### Floating labels
 
@@ -109,6 +136,37 @@ When a field has errors, the input gets the `form.validator` class
 (`validator` in daisyUI 5, which triggers the built-in error ring).
 The error message renders as `<p class="label text-error">` inside
 the same fieldset.
+
+### Tooltip error feedback
+
+```php
+$this->Form->control('email', ['feedbackStyle' => 'tooltip']);
+```
+
+When the field has errors, the input is wrapped in a daisyUI
+`tooltip tooltip-error tooltip-open` div containing the error text,
+and the block error paragraph below the input is suppressed.
+
+### Label tooltips
+
+```php
+$this->Form->control('username', ['tooltip' => 'Must be unique']);
+```
+
+Appends a small info icon to the label text, wrapped in a daisyUI
+`tooltip` span with the tooltip text as `data-tip`. Uses `form.labelTooltip`
+and `form.labelTooltipIcon` class map keys.
+
+### Static control (read-only)
+
+```php
+$this->Form->staticControl('slug', ['value' => 'my-post-slug']);
+```
+
+Renders the value as a `<p class="py-2 text-base-content">` (from
+`form.staticControl`) and adds a hidden field so the value still
+submits with the form. Wrapped in the same fieldset/div container
+as a regular control, so forms stay visually consistent.
 
 ### Input groups (prepend/append)
 
