@@ -34,14 +34,22 @@ KTUI has no `fieldset-legend` equivalent.
 ### Alignment
 
 ```php
-$this->Form->create($article);                        // vertical, fieldset wrapper
+$this->Form->create($article);                              // vertical, fieldset wrapper
 $this->Form->create($article, ['align' => 'horizontal']);  // div wrapper, flex row
+$this->Form->create($article, ['align' => 'inline']);     // search/filter bar layout
 ```
 
 Horizontal layout keeps the `<div>` wrapper from `form.containerHorizontal`
 and a fixed-width label from `form.labelHorizontal`. Fieldsets are
 disabled in horizontal mode because a `<legend>` doesn't compose with
 the two-column flex layout.
+
+Inline layout wraps all controls in a single
+`<div class="flex flex-wrap items-end gap-3 mb-4">` (from
+`form.inlineWrapper`), hides each label as `sr-only` (still readable
+by screen readers), and suppresses help text. Intended for search
+bars and filter rows. Widths are user-controlled — pass
+`['class' => 'w-48']` or similar on each control to size them.
 
 ### Every CakePHP input type
 
