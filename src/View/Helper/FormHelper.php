@@ -172,7 +172,8 @@ class FormHelper extends CoreFormHelper
         $type = $parsedOptions['type'];
 
         $size = $options['size'] ?? null;
-        unset($options['size']);
+        $color = $options['color'] ?? null;
+        unset($options['size'], $options['color']);
 
         $isHorizontal = $this->_align === static::ALIGN_HORIZONTAL;
         $isInline = $this->_align === static::ALIGN_INLINE;
@@ -227,16 +228,26 @@ class FormHelper extends CoreFormHelper
             $options = $this->injectClasses($this->classMap('form.range'), $options);
         }
 
-        // Apply size modifier (input/select/textarea).
-        if ($size !== null && in_array($type, ['text', 'email', 'password', 'url', 'tel', 'search', 'number', 'select', 'textarea'], true)) {
-            $sizeKey = match ($type) {
-                'select' => 'form.select.' . $size,
-                'textarea' => 'form.textarea.' . $size,
-                default => 'form.input.' . $size,
-            };
-            $sizeClass = $this->classMap($sizeKey);
-            if ($sizeClass !== '') {
-                $options = $this->injectClasses($sizeClass, $options);
+        // Apply size modifier across all widget families that have a size
+        // variant block in the class map. Unmapped combos are silent no-ops.
+        if ($size !== null) {
+            $sizePrefix = $this->_sizePrefix($type, $isSwitch);
+            if ($sizePrefix !== null) {
+                $sizeClass = $this->classMap($sizePrefix . '.' . $size);
+                if ($sizeClass !== '') {
+                    $options = $this->injectClasses($sizeClass, $options);
+                }
+            }
+        }
+
+        // Apply color modifier for widgets that support one (switch and file).
+        if ($color !== null) {
+            $colorPrefix = $this->_colorPrefix($type, $isSwitch);
+            if ($colorPrefix !== null) {
+                $colorClass = $this->classMap($colorPrefix . '.' . $color);
+                if ($colorClass !== '') {
+                    $options = $this->injectClasses($colorClass, $options);
+                }
             }
         }
 
@@ -507,6 +518,46 @@ class FormHelper extends CoreFormHelper
             'labelClass' => $templateVars['labelClass'] ?? $this->classMap('form.label'),
             'text' => $templateVars['labelText'] ?? '',
         ]);
+    }
+
+    /**
+     * Returns the `form.*` class-map prefix used for size variant lookups,
+     * e.g. `form.input`, `form.checkbox`, `form.switch`. Returns null for
+     * types that don't support size variants (hidden, submit, etc.).
+     */
+    protected function _sizePrefix(string $type, bool $isSwitch): ?string
+    {
+        if ($isSwitch) {
+            return 'form.switch';
+        }
+
+        return match ($type) {
+            'text', 'email', 'password', 'url', 'tel', 'search', 'number' => 'form.input',
+            'select' => 'form.select',
+            'textarea' => 'form.textarea',
+            'checkbox' => 'form.checkbox',
+            'radio' => 'form.radio',
+            'file' => 'form.file',
+            default => null,
+        };
+    }
+
+    /**
+     * Returns the `form.*` class-map prefix used for color variant lookups.
+     * Currently only switches and file inputs support colors in the daisyUI
+     * class map.
+     */
+    protected function _colorPrefix(string $type, bool $isSwitch): ?string
+    {
+        if ($isSwitch) {
+            return 'form.switch';
+        }
+
+        if ($type === 'file') {
+            return 'form.file';
+        }
+
+        return null;
     }
 
     /**
