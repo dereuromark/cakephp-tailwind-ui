@@ -135,6 +135,91 @@ class HtmlHelperTest extends TestCase
         $this->assertStringContainsString('&lt;b&gt;', $result);
     }
 
+    public function testAlertDefault(): void
+    {
+        $result = $this->Html->alert('Heads up');
+
+        $this->assertStringContainsString('class="alert alert-info"', $result);
+        $this->assertStringContainsString('role="alert"', $result);
+        $this->assertStringContainsString('Heads up', $result);
+        $this->assertStringContainsString('<div', $result);
+    }
+
+    public function testAlertSuccessVariant(): void
+    {
+        $result = $this->Html->alert('Saved', ['class' => 'success']);
+
+        $this->assertStringContainsString('alert-success', $result);
+        // Default fallback (alert-info) is suppressed when a color is set.
+        $this->assertStringNotContainsString('alert-info', $result);
+        $this->assertStringNotContainsString('"success"', $result);
+    }
+
+    public function testAlertDangerMapsToError(): void
+    {
+        $result = $this->Html->alert('Boom', ['class' => 'danger']);
+
+        $this->assertStringContainsString('alert-error', $result);
+        $this->assertStringNotContainsString('alert-info', $result);
+        $this->assertStringNotContainsString('alert-danger', $result);
+    }
+
+    public function testAlertErrorAliasIsRecognized(): void
+    {
+        $result = $this->Html->alert('Boom', ['class' => 'error']);
+
+        $this->assertStringContainsString('alert-error', $result);
+        // `error` is a recognized color, so the default fallback is suppressed.
+        $this->assertStringNotContainsString('alert-info', $result);
+    }
+
+    public function testAlertWarningAndInfo(): void
+    {
+        $result = $this->Html->alert('Heads up', ['class' => 'warning']);
+        $this->assertStringContainsString('alert-warning', $result);
+
+        $result = $this->Html->alert('FYI', ['class' => 'info']);
+        $this->assertStringContainsString('alert-info', $result);
+    }
+
+    public function testAlertEscapesText(): void
+    {
+        $result = $this->Html->alert('<b>boom</b>');
+        $this->assertStringNotContainsString('<b>boom</b>', $result);
+        $this->assertStringContainsString('&lt;b&gt;boom&lt;/b&gt;', $result);
+    }
+
+    public function testAlertEscapeFalseRendersRawHtml(): void
+    {
+        $result = $this->Html->alert('<strong>raw</strong>', ['escape' => false]);
+        $this->assertStringContainsString('<strong>raw</strong>', $result);
+    }
+
+    public function testAlertCustomTag(): void
+    {
+        $result = $this->Html->alert('Note', ['tag' => 'aside']);
+        $this->assertStringContainsString('<aside', $result);
+        $this->assertStringNotContainsString('<div', $result);
+    }
+
+    public function testAlertExtraClassesPreserved(): void
+    {
+        $result = $this->Html->alert('Big', ['class' => 'success my-extra-class']);
+
+        $this->assertStringContainsString('alert-success', $result);
+        $this->assertStringContainsString('my-extra-class', $result);
+    }
+
+    public function testAlertOnKtuiPreset(): void
+    {
+        Configure::write('TailwindUi.classMap', 'ktui');
+        $this->Html = new HtmlHelper($this->View);
+
+        $result = $this->Html->alert('Saved', ['class' => 'success']);
+        $this->assertStringContainsString('bg-green-50', $result);
+        $this->assertStringContainsString('border-green-200', $result);
+    }
+
     public function testIconDefault(): void
     {
         $result = $this->Html->icon('check');
