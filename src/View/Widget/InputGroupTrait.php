@@ -66,21 +66,43 @@ trait InputGroupTrait
     protected function _loadClassMap(): array
     {
         $pluginPath = Plugin::path('TailwindUi');
-        $base = include $pluginPath . 'config/class_maps/daisyui.php';
+        $base = $this->_extractClassMap(include $pluginPath . 'config/class_maps/daisyui.php');
         $configured = Configure::read('TailwindUi.classMap');
         if (is_string($configured)) {
             $presetFile = $pluginPath . 'config/class_maps/' . $configured . '.php';
             if (file_exists($presetFile)) {
-                $base = array_merge($base, include $presetFile);
+                $base = array_merge($base, $this->_extractClassMap(include $presetFile));
             }
         } elseif (is_array($configured)) {
-            $base = array_merge($base, $configured);
+            $base = array_merge($base, $this->_extractClassMap($configured));
         }
         $overrides = Configure::read('TailwindUi.classMapOverrides');
         if (is_array($overrides)) {
-            $base = array_merge($base, $overrides);
+            $base = array_merge($base, $this->_extractClassMap($overrides));
         }
 
         return $base;
+    }
+
+    /**
+     * Accepts either the legacy flat class-map array or the extended nested
+     * shape `['classMap' => [...], 'templates' => [...]]` and returns just the
+     * class map portion.
+     *
+     * @param array<string, mixed> $preset
+     *
+     * @return array<string, string>
+     */
+    protected function _extractClassMap(array $preset): array
+    {
+        if (isset($preset['classMap']) && is_array($preset['classMap'])) {
+            /** @var array<string, string> $map */
+            $map = $preset['classMap'];
+
+            return $map;
+        }
+
+        /** @var array<string, string> $preset */
+        return $preset;
     }
 }

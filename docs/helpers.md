@@ -8,15 +8,40 @@ work unchanged — they just emit Tailwind/DaisyUI markup instead of Bootstrap.
 
 `TailwindUi\View\Helper\FormHelper` extends `Cake\View\Helper\FormHelper`.
 
+### Control markup (fieldset, daisyUI 5 idiom)
+
+In the default alignment, every labeled control is wrapped in a
+`<fieldset class="fieldset">` with its label rendered as
+`<legend class="fieldset-legend">`, matching daisyUI 5's recommended
+form idiom:
+
+```html
+<fieldset class="fieldset">
+  <legend class="fieldset-legend">Title</legend>
+  <input class="input w-full" type="text" name="title">
+  <p class="label text-base-content/60">Helper text</p>
+</fieldset>
+```
+
+Single checkboxes keep their inline-flex label wrapper (no fieldset).
+Submit buttons and hidden fields are never wrapped.
+
+Presets control the container markup via a `templates` block in the
+preset file — see [the class map guide](class-map.md) for details.
+The KTUI preset ships a `<div class="mb-4">` wrapper instead, because
+KTUI has no `fieldset-legend` equivalent.
+
 ### Alignment
 
 ```php
-$this->Form->create($article);                        // vertical (default)
-$this->Form->create($article, ['align' => 'horizontal']);
+$this->Form->create($article);                        // vertical, fieldset wrapper
+$this->Form->create($article, ['align' => 'horizontal']);  // div wrapper, flex row
 ```
 
-Horizontal layout uses a flex container from `form.containerHorizontal` and
-a fixed-width label from `form.labelHorizontal`.
+Horizontal layout keeps the `<div>` wrapper from `form.containerHorizontal`
+and a fixed-width label from `form.labelHorizontal`. Fieldsets are
+disabled in horizontal mode because a `<legend>` doesn't compose with
+the two-column flex layout.
 
 ### Every CakePHP input type
 
@@ -48,7 +73,29 @@ $this->Form->control('username', [
 ]);
 ```
 
-Rendered below the input with `form.helpText` and `aria-describedby`.
+Rendered inside the fieldset as `<p class="label text-base-content/60">`
+(daisyUI 5 helper-label styling) with an `id` and matching
+`aria-describedby` on the input. KTUI uses `<div class="text-muted-foreground text-2sm">`.
+
+### Size variants
+
+```php
+$this->Form->control('title', ['size' => 'lg']);
+$this->Form->control('status', ['options' => [...], 'size' => 'sm']);
+$this->Form->control('body', ['size' => 'xl']);
+```
+
+Injects the daisyUI size modifier (`input-lg`, `select-sm`, `textarea-xl`)
+via the `form.input.{size}` / `form.select.{size}` / `form.textarea.{size}`
+class map keys. Unmapped sizes (e.g. KTUI has no size equivalents) are
+silently ignored.
+
+### Validation errors
+
+When a field has errors, the input gets the `form.validator` class
+(`validator` in daisyUI 5, which triggers the built-in error ring).
+The error message renders as `<p class="label text-error">` inside
+the same fieldset.
 
 ### Input groups (prepend/append)
 

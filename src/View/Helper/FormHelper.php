@@ -46,6 +46,35 @@ class FormHelper extends CoreFormHelper
     ];
 
     /**
+     * Plugin default (div-based) form templates. Used when the active preset
+     * does not supply its own templates block, and always used when the form
+     * is in horizontal alignment mode.
+     *
+     * @var array<string, string>
+     */
+    protected array $_defaultFormTemplates = [
+        'label' => '<label{{attrs}}>{{text}}</label>',
+        'error' => '<div id="{{id}}" class="{{errorClass}}">{{content}}</div>',
+        'inputContainer' => '<div class="{{containerClass}}">{{content}}{{help}}</div>',
+        'inputContainerError' => '<div class="{{containerClass}}">{{content}}{{error}}{{help}}</div>',
+        'checkboxContainer' => '<div class="{{containerClass}}">{{content}}{{help}}</div>',
+        'checkboxContainerError' => '<div class="{{containerClass}}">{{content}}{{error}}{{help}}</div>',
+        'checkboxFormGroup' => '{{label}}',
+        'checkboxWrapper' => '<div class="{{wrapperClass}}">{{label}}</div>',
+        'radioContainer' => '<div class="{{containerClass}}" role="group" aria-labelledby="{{groupId}}">{{content}}{{help}}</div>',
+        'radioContainerError' => '<div class="{{containerClass}}" role="group" aria-labelledby="{{groupId}}">{{content}}{{error}}{{help}}</div>',
+        'radioWrapper' => '<div class="{{wrapperClass}}">{{label}}</div>',
+        'radioLabel' => '<label{{attrs}}>{{text}}</label>',
+        'multicheckboxContainer' => '<div class="{{containerClass}}" role="group" aria-labelledby="{{groupId}}">{{content}}{{help}}</div>',
+        'multicheckboxContainerError' => '<div class="{{containerClass}}" role="group" aria-labelledby="{{groupId}}">{{content}}{{error}}{{help}}</div>',
+        'multicheckboxLabel' => '<label{{attrs}}>{{text}}</label>',
+        'multicheckboxWrapper' => '<fieldset>{{content}}</fieldset>',
+        'nestingLabel' => '{{hidden}}<label{{attrs}}>{{input}} {{text}}</label>',
+        'submitContainer' => '<div class="{{containerClass}}">{{content}}</div>',
+        'inputHelp' => '<div class="{{helperClass}}">{{text}}</div>',
+    ];
+
+    /**
      * Constructor.
      *
      * @param \Cake\View\View $view The View this helper is being attached to.
@@ -53,7 +82,6 @@ class FormHelper extends CoreFormHelper
      */
     public function __construct(View $view, array $config = [])
     {
-        // Merge our widgets into config so parent picks them up
         if (!isset($config['widgets'])) {
             $config['widgets'] = $this->_widgets;
         } else {
@@ -62,27 +90,7 @@ class FormHelper extends CoreFormHelper
 
         parent::__construct($view, $config);
 
-        $this->setTemplates([
-            'label' => '<label{{attrs}}>{{text}}</label>',
-            'error' => '<div id="{{id}}" class="{{errorClass}}">{{content}}</div>',
-            'inputContainer' => '<div class="{{containerClass}}">{{content}}{{help}}</div>',
-            'inputContainerError' => '<div class="{{containerClass}}">{{content}}{{error}}{{help}}</div>',
-            'checkboxContainer' => '<div class="{{containerClass}}">{{content}}{{help}}</div>',
-            'checkboxContainerError' => '<div class="{{containerClass}}">{{content}}{{error}}{{help}}</div>',
-            'checkboxFormGroup' => '{{label}}',
-            'checkboxWrapper' => '<div class="mt-1 [&>label]:inline-flex [&>label]:items-center [&>label]:gap-2 [&>label]:cursor-pointer">{{label}}</div>',
-            'radioContainer' => '<div class="{{containerClass}}" role="group" aria-labelledby="{{groupId}}">{{content}}{{help}}</div>',
-            'radioContainerError' => '<div class="{{containerClass}}" role="group" aria-labelledby="{{groupId}}">{{content}}{{error}}{{help}}</div>',
-            'radioWrapper' => '<div class="mt-1 [&>label]:inline-flex [&>label]:items-center [&>label]:gap-2 [&>label]:cursor-pointer">{{label}}</div>',
-            'radioLabel' => '<label{{attrs}}>{{text}}</label>',
-            'multicheckboxContainer' => '<div class="{{containerClass}}" role="group" aria-labelledby="{{groupId}}">{{content}}{{help}}</div>',
-            'multicheckboxContainerError' => '<div class="{{containerClass}}" role="group" aria-labelledby="{{groupId}}">{{content}}{{error}}{{help}}</div>',
-            'multicheckboxLabel' => '<label{{attrs}}>{{text}}</label>',
-            'multicheckboxWrapper' => '<fieldset>{{content}}</fieldset>',
-            'multicheckboxTitle' => '<legend class="{{labelClass}} mb-2 block">{{text}}</legend>',
-            'nestingLabel' => '{{hidden}}<label{{attrs}}>{{input}} {{text}}</label>',
-            'submitContainer' => '<div class="{{containerClass}}">{{content}}</div>',
-        ]);
+        $this->setTemplates($this->_defaultFormTemplates);
     }
 
     /**
@@ -114,7 +122,7 @@ class FormHelper extends CoreFormHelper
     /**
      * {@inheritDoc}
      *
-     * Applies Tailwind classes to the control.
+     * Applies Tailwind classes and the fieldset (or div) container markup.
      */
     public function control(string $fieldName, array $options = []): string
     {
@@ -135,39 +143,22 @@ class FormHelper extends CoreFormHelper
         $isSwitch = $options['switch'];
         unset($options['help'], $options['switch']);
 
-        // Determine container class based on alignment
-        if ($this->_align === static::ALIGN_HORIZONTAL) {
-            $containerClass = $this->classMap('form.containerHorizontal');
-        } else {
-            $containerClass = $this->classMap('form.container');
-        }
-
-        // Build templates for this control
-        $templates = (array)$options['templates'];
-
-        // Determine the type early to apply type-specific classes
         $parsedOptions = $this->_parseOptions($fieldName, $options);
         $type = $parsedOptions['type'];
 
-        // Apply label class. Checkbox/radio/multicheckbox get a different class
-        // because their nesting label wraps the input and needs flex layout.
+        $size = $options['size'] ?? null;
+        unset($options['size']);
+
+        $isHorizontal = $this->_align === static::ALIGN_HORIZONTAL;
         $isSingleCheckbox = $type === 'checkbox';
         $isGroupInput = $type === 'radio' || $type === 'multicheckbox'
             || ($type === 'select' && ($options['multiple'] ?? null) === 'checkbox');
 
-        if ($isSingleCheckbox) {
-            $labelClass = 'inline-flex items-center gap-2 cursor-pointer';
-        } elseif ($this->_align === static::ALIGN_HORIZONTAL) {
-            $labelClass = $this->classMap('form.labelHorizontal');
-        } else {
-            $labelClass = $this->classMap('form.label');
-            if ($isGroupInput) {
-                $labelClass .= ' block mb-2';
-            }
-        }
+        $controlTemplates = $this->_buildControlTemplates($isHorizontal);
 
-        // Inject label class
+        // Resolve label class (legend in fieldset mode, label otherwise).
         if ($options['label'] !== false) {
+            $labelClass = $this->_resolveLabelClass($type, $isHorizontal, $isGroupInput, $isSingleCheckbox);
             if ($options['label'] === null || is_string($options['label'])) {
                 $options['label'] = ['class' => $labelClass, 'text' => $options['label']];
             } elseif (is_array($options['label'])) {
@@ -175,7 +166,38 @@ class FormHelper extends CoreFormHelper
             }
         }
 
-        // Apply error class to the field input if field has errors
+        // Apply widget classes.
+        if ($type === 'checkbox') {
+            $mapKey = $isSwitch ? 'form.switch' : 'form.checkbox';
+            $options = $this->injectClasses($this->classMap($mapKey), $options);
+            $options['templateVars']['labelClass'] = $this->classMap('form.label');
+            $options['templateVars']['wrapperClass'] = $this->classMap('form.checkboxLabelWrapper');
+        } elseif ($type === 'radio') {
+            $options = $this->injectClasses($this->classMap('form.radio'), $options);
+            $options['templateVars']['labelClass'] = $this->classMap('form.label');
+            $options['templateVars']['wrapperClass'] = $this->classMap('form.checkboxLabelWrapper');
+            $options['templateVars']['groupId'] = $this->_domId($fieldName) . '-label';
+        } elseif ($type === 'multicheckbox' || ($type === 'select' && ($options['multiple'] ?? null) === 'checkbox')) {
+            $options['templateVars']['labelClass'] = $this->classMap('form.label');
+            $options['templateVars']['groupId'] = $this->_domId($fieldName) . '-label';
+        } elseif ($type === 'range') {
+            $options = $this->injectClasses($this->classMap('form.range'), $options);
+        }
+
+        // Apply size modifier (input/select/textarea).
+        if ($size !== null && in_array($type, ['text', 'email', 'password', 'url', 'tel', 'search', 'number', 'select', 'textarea'], true)) {
+            $sizeKey = match ($type) {
+                'select' => 'form.select.' . $size,
+                'textarea' => 'form.textarea.' . $size,
+                default => 'form.input.' . $size,
+            };
+            $sizeClass = $this->classMap($sizeKey);
+            if ($sizeClass !== '') {
+                $options = $this->injectClasses($sizeClass, $options);
+            }
+        }
+
+        // Apply validator/error class to the input if the field has errors.
         $isError = $this->isFieldError($fieldName);
         if ($isError && $type !== 'hidden') {
             $errorKey = match ($type) {
@@ -185,79 +207,44 @@ class FormHelper extends CoreFormHelper
             };
             $errorClass = $this->classMap($errorKey);
             if ($errorClass) {
-                $existing = $options['class'] ?? '';
-                $options['class'] = trim(($existing ? $existing . ' ' : '') . $errorClass);
+                $options = $this->injectClasses($errorClass, $options);
             }
         }
 
-        // Set error class templateVar
-        $options['templateVars']['errorClass'] = $this->classMap('form.error');
-
-        // Apply checkbox/switch classes
-        if ($type === 'checkbox') {
-            if ($isSwitch) {
-                $existing = $options['class'] ?? '';
-                $options['class'] = trim(($existing ? $existing . ' ' : '') . $this->classMap('form.switch'));
-            } else {
-                $existing = $options['class'] ?? '';
-                $options['class'] = trim(($existing ? $existing . ' ' : '') . $this->classMap('form.checkbox'));
-            }
-            $options['templateVars']['labelClass'] = $this->classMap('form.label');
-        }
-
-        // Apply radio classes
-        if ($type === 'radio') {
-            $existing = $options['class'] ?? '';
-            $options['class'] = trim(($existing ? $existing . ' ' : '') . $this->classMap('form.radio'));
-            $options['templateVars']['labelClass'] = $this->classMap('form.label');
-            $options['templateVars']['groupId'] = $this->_domId($fieldName) . '-label';
-        }
-
-        // Apply multicheckbox label class
-        if (
-            $type === 'multicheckbox'
-            || ($type === 'select' && isset($options['multiple']) && $options['multiple'] === 'checkbox')
-        ) {
-            $options['templateVars']['labelClass'] = $this->classMap('form.label');
-            $options['templateVars']['groupId'] = $this->_domId($fieldName) . '-label';
-        }
-
-        // Apply range class
-        if ($type === 'range') {
-            $existing = $options['class'] ?? '';
-            $options['class'] = trim(($existing ? $existing . ' ' : '') . $this->classMap('form.range'));
-        }
-
-        // Handle help text
+        // Build help fragment (wraps with the preset's inputHelp template).
         $helpHtml = '';
         if ($help !== null) {
-            $helpClass = $this->classMap('form.helpText');
+            $helperClass = $this->classMap('form.helpText');
             $helpId = $this->_domId($fieldName) . '-help';
-            $helpHtml = '<div id="' . $helpId . '" class="' . $helpClass . '">' . h($help) . '</div>';
+            $helpTpl = $controlTemplates['inputHelp'] ?? '<div class="{{helperClass}}">{{text}}</div>';
+            $helpHtml = strtr($helpTpl, [
+                '{{helperClass}}' => $helperClass,
+                '{{text}}' => h($help),
+            ]);
+            // Inject the id via a wrapper attribute if the template uses <div> or <p>.
+            $helpHtml = preg_replace('/^(<(?:div|p))\b/', '$1 id="' . $helpId . '"', $helpHtml) ?? $helpHtml;
 
             $describedBy = $options['aria-describedby'] ?? '';
             $options['aria-describedby'] = trim(($describedBy ? $describedBy . ' ' : '') . $helpId);
         }
 
+        // Stash template vars.
+        $containerClass = $isHorizontal
+            ? $this->classMap('form.containerHorizontal')
+            : $this->classMap('form.container');
+        $fieldsetClass = $this->classMap('form.fieldset');
+        if ($fieldsetClass === '') {
+            $fieldsetClass = $containerClass;
+        }
+
         $options['templateVars']['help'] = $helpHtml;
         $options['templateVars']['containerClass'] = $containerClass;
+        $options['templateVars']['fieldsetClass'] = $fieldsetClass;
+        $options['templateVars']['errorClass'] = $this->classMap('form.error');
 
-        // Override container templates to use templateVars-based containerClass
-        $containerTemplates = [
-            'inputContainer' => '<div class="{{containerClass}}">{{content}}{{help}}</div>',
-            'inputContainerError' => '<div class="{{containerClass}}">{{content}}{{error}}{{help}}</div>',
-            'checkboxContainer' => '<div class="{{containerClass}}">{{content}}{{help}}</div>',
-            'checkboxContainerError' => '<div class="{{containerClass}}">{{content}}{{error}}{{help}}</div>',
-            'radioContainer' => '<div class="{{containerClass}}" role="group" aria-labelledby="{{groupId}}">{{content}}{{help}}</div>',
-            'radioContainerError' => '<div class="{{containerClass}}" role="group" aria-labelledby="{{groupId}}">{{content}}{{error}}{{help}}</div>',
-            'multicheckboxContainer' => '<div class="{{containerClass}}" role="group" aria-labelledby="{{groupId}}">{{content}}{{help}}</div>',
-            'multicheckboxContainerError' => '<div class="{{containerClass}}" role="group" aria-labelledby="{{groupId}}">{{content}}{{error}}{{help}}</div>',
-            'submitContainer' => '<div class="{{containerClass}}">{{content}}</div>',
-            'error' => '<div id="{{id}}" class="{{errorClass}}">{{content}}</div>',
-            'multicheckboxTitle' => '<legend class="{{labelClass}} mb-2">{{text}}</legend>',
-        ];
-
-        $options['templates'] = array_merge($containerTemplates, $templates);
+        // Merge our control templates on top of user-supplied template overrides.
+        $userTemplates = (array)$options['templates'];
+        $options['templates'] = array_merge($controlTemplates, $userTemplates);
 
         return parent::control($fieldName, $options);
     }
@@ -269,20 +256,27 @@ class FormHelper extends CoreFormHelper
      */
     public function submit(?string $caption = null, array $options = []): string
     {
-        $containerClass = $this->classMap('form.container');
         if (!isset($options['templateVars'])) {
             $options['templateVars'] = [];
         }
-        $options['templateVars']['containerClass'] = $containerClass;
+        $options['templateVars']['containerClass'] = $this->classMap('form.container');
 
-        // Apply button classes to the submit input
         $options = $this->applyButtonClasses($options);
+
+        // Ensure submit uses the plugin default submitContainer template, not
+        // whatever fieldset override the preset registered.
+        $options['templates'] = array_merge(
+            ['submitContainer' => $this->_defaultFormTemplates['submitContainer']],
+            (array)($options['templates'] ?? []),
+        );
 
         return parent::submit($caption, $options);
     }
 
     /**
      * Override _inputContainerTemplate to apply containerClass from templateVars.
+     *
+     * @param array<string, mixed> $options
      */
     protected function _inputContainerTemplate(array $options): string
     {
@@ -293,6 +287,7 @@ class FormHelper extends CoreFormHelper
 
         $templateVars = $options['options']['templateVars'] ?? [];
         $containerClass = $templateVars['containerClass'] ?? $this->classMap('form.container');
+        $fieldsetClass = $templateVars['fieldsetClass'] ?? $containerClass;
 
         return $this->formatTemplate($inputContainerTemplate, [
             'content' => $options['content'],
@@ -301,6 +296,7 @@ class FormHelper extends CoreFormHelper
             'required' => $options['options']['required'] ? ' ' . $this->templater()->get('requiredClass') : '',
             'type' => $options['options']['type'],
             'containerClass' => $containerClass,
+            'fieldsetClass' => $fieldsetClass,
             'templateVars' => $templateVars,
             'help' => $templateVars['help'] ?? '',
             'groupId' => $templateVars['groupId'] ?? '',
@@ -310,6 +306,8 @@ class FormHelper extends CoreFormHelper
 
     /**
      * Override _groupTemplate to pass labelClass.
+     *
+     * @param array<string, mixed> $options
      */
     protected function _groupTemplate(array $options): string
     {
@@ -328,5 +326,53 @@ class FormHelper extends CoreFormHelper
             'labelClass' => $templateVars['labelClass'] ?? $this->classMap('form.label'),
             'text' => $templateVars['labelText'] ?? '',
         ]);
+    }
+
+    /**
+     * Returns the merged control template set. When the form is in horizontal
+     * alignment mode, preset template overrides are ignored and the div-based
+     * plugin defaults are used. Otherwise, preset overrides layer on top.
+     *
+     * @return array<string, string>
+     */
+    protected function _buildControlTemplates(bool $isHorizontal): array
+    {
+        if ($isHorizontal) {
+            return $this->_defaultFormTemplates;
+        }
+
+        return array_merge($this->_defaultFormTemplates, $this->formTemplates());
+    }
+
+    /**
+     * Returns the label class for a given control type and layout mode.
+     * Resolves the tension between "label above input" (legend in fieldset mode),
+     * horizontal label, and the inline-flex single-checkbox label.
+     */
+    protected function _resolveLabelClass(
+        string $type,
+        bool $isHorizontal,
+        bool $isGroupInput,
+        bool $isSingleCheckbox,
+    ): string {
+        if ($isSingleCheckbox) {
+            return 'inline-flex items-center gap-2 cursor-pointer';
+        }
+
+        if ($isHorizontal) {
+            return $this->classMap('form.labelHorizontal');
+        }
+
+        $legendClass = $this->classMap('form.fieldsetLegend');
+        if ($legendClass !== '') {
+            return $legendClass;
+        }
+
+        $labelClass = $this->classMap('form.label');
+        if ($isGroupInput) {
+            $labelClass = trim($labelClass . ' block mb-2');
+        }
+
+        return $labelClass;
     }
 }

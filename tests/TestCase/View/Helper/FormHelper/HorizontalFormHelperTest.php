@@ -19,7 +19,9 @@ class HorizontalFormHelperTest extends FormHelperTestCase
         $this->Form->create($this->article, ['align' => 'horizontal']);
         $result = $this->Form->control('status', ['options' => ['a' => 'Active', 'i' => 'Inactive']]);
         $this->assertStringContainsString('flex items-start gap-4', $result);
-        $this->assertStringContainsString('select select-bordered w-full', $result);
+        $this->assertStringContainsString('select w-full', $result);
+        // Horizontal mode keeps the div wrapper — no fieldset.
+        $this->assertStringNotContainsString('<fieldset', $result);
     }
 
     public function testAlignResetAfterEnd(): void
@@ -29,7 +31,8 @@ class HorizontalFormHelperTest extends FormHelperTestCase
 
         $this->Form->create($this->article);
         $result = $this->Form->control('title');
-        $this->assertStringContainsString('mb-4', $result);
+        // Default alignment uses fieldset wrapper (not the mb-4 div).
+        $this->assertStringContainsString('<fieldset class="fieldset"', $result);
         $this->assertStringNotContainsString('flex items-start gap-4', $result);
     }
 }

@@ -34,7 +34,7 @@ class BasicWidgetTest extends TestCase
     {
         $widget = new BasicWidget($this->templates);
         $result = $widget->render(['name' => 'email', 'type' => 'email'], $this->context);
-        $this->assertStringContainsString('input input-bordered w-full', $result);
+        $this->assertStringContainsString('input w-full', $result);
         $this->assertStringContainsString('type="email"', $result);
     }
 
@@ -42,7 +42,7 @@ class BasicWidgetTest extends TestCase
     {
         $widget = new BasicWidget($this->templates);
         $result = $widget->render(['name' => 'id', 'type' => 'hidden'], $this->context);
-        $this->assertStringNotContainsString('input-bordered', $result);
+        $this->assertStringNotContainsString('class="input', $result);
     }
 
     public function testRenderWithPrepend(): void
