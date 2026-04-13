@@ -166,7 +166,14 @@ class FormHelper extends CoreFormHelper
         $isSwitch = $options['switch'];
         $tooltip = $options['tooltip'];
         $feedbackStyle = $options['feedbackStyle'];
-        unset($options['help'], $options['switch'], $options['tooltip'], $options['feedbackStyle']);
+        $floating = (bool)($options['floating'] ?? false);
+        unset(
+            $options['help'],
+            $options['switch'],
+            $options['tooltip'],
+            $options['feedbackStyle'],
+            $options['floating'],
+        );
 
         $parsedOptions = $this->_parseOptions($fieldName, $options);
         $type = $parsedOptions['type'];
@@ -311,6 +318,27 @@ class FormHelper extends CoreFormHelper
             $controlTemplates['formGroup'] = '{{label}}' . $tooltipOpen . '{{input}}</div>';
             $controlTemplates['inputContainerError'] =
                 $controlTemplates['inputContainer'] ?? $controlTemplates['inputContainerError'];
+        }
+
+        // Floating label mode: replace the fieldset/legend structure with a
+        // daisyUI `<label class="floating-label">` wrapping a <span> + input.
+        // Only valid for text-style inputs and selects/textareas.
+        if ($floating && in_array($type, ['text', 'email', 'password', 'url', 'tel', 'search', 'number', 'select', 'textarea'], true)) {
+            $floatingClass = $this->classMap('form.floatingLabel');
+            if ($floatingClass !== '') {
+                // daisyUI's floating-label needs a placeholder set on the input.
+                if (!isset($options['placeholder'])) {
+                    $options['placeholder'] = ' ';
+                }
+                $controlTemplates['label'] = '<span{{attrs}}>{{text}}</span>';
+                $controlTemplates['formGroup'] = '<label class="' . $floatingClass . '">{{label}}{{input}}</label>';
+                $controlTemplates['inputContainer'] = '<div class="{{containerClass}}">{{content}}{{help}}</div>';
+                $controlTemplates['inputContainerError'] = '<div class="{{containerClass}}">{{content}}{{error}}{{help}}</div>';
+                // Strip the legend class — the label is now an inline span.
+                if (is_array($options['label'] ?? null)) {
+                    $options['label']['class'] = '';
+                }
+            }
         }
 
         // Merge our control templates on top of user-supplied template overrides.

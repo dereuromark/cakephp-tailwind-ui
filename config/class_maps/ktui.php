@@ -30,6 +30,7 @@ return [
         'form.inputGroupContainer' => 'flex items-center w-full',
         'form.inputGroupText' => 'px-3 bg-muted border border-border rounded-l-md text-sm',
         'form.checkboxLabelWrapper' => 'mt-1 [&>label]:inline-flex [&>label]:items-center [&>label]:gap-2 [&>label]:cursor-pointer',
+        'form.floatingLabel' => '',
         'form.staticControl' => 'py-2 text-foreground',
         'form.labelTooltip' => 'ml-1 align-middle text-muted-foreground',
         'form.labelTooltipIcon' => 'size-4 inline-block',

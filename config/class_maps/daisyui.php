@@ -30,6 +30,7 @@ return [
         'form.inputGroupContainer' => 'join w-full',
         'form.inputGroupText' => 'join-item btn btn-ghost no-animation',
         'form.checkboxLabelWrapper' => 'mt-1 [&>label]:inline-flex [&>label]:items-center [&>label]:gap-2 [&>label]:cursor-pointer',
+        'form.floatingLabel' => 'floating-label',
         'form.staticControl' => 'py-2 text-base-content',
         'form.labelTooltip' => 'tooltip tooltip-right ml-1 align-middle',
         'form.labelTooltipIcon' => 'size-4 inline-block',
