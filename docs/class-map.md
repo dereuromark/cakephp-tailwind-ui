@@ -81,15 +81,17 @@ The full list of keys is in `config/class_maps/daisyui.php`. Summary:
 | Key | Purpose |
 |---|---|
 | `btn` | Base `<button>`/submit class |
-| `btn.primary` | Primary variant |
-| `btn.secondary` | Secondary variant |
-| `btn.success` | Success variant |
-| `btn.danger` | Danger variant |
-| `btn.warning` | Warning variant |
-| `btn.info` | Info variant |
-| `btn.outline` | Outline modifier |
-| `btn.sm` | Small size |
-| `btn.lg` | Large size |
+| `btn.primary` `btn.secondary` `btn.neutral` `btn.accent` | Color variants |
+| `btn.success` `btn.danger` `btn.warning` `btn.info` | Semantic color variants |
+| `btn.outline` `btn.soft` `btn.dash` `btn.ghost` `btn.link` | Style modifiers |
+| `btn.xs` `btn.sm` `btn.md` `btn.lg` `btn.xl` | Sizes |
+
+Colors and modifiers stack freely: `['class' => 'soft primary']` emits
+`btn btn-soft btn-primary`. Sizes and modifiers don't suppress the
+default color — `['class' => 'ghost']` still gets `btn-primary` applied.
+Any custom key matching `btn.*` added via overrides is automatically
+recognized as a modifier (add the name to the `colorVariants` list to
+treat it as a color).
 
 ### Alerts / flash
 
@@ -103,9 +105,13 @@ The full list of keys is in `config/class_maps/daisyui.php`. Summary:
 | Key | Purpose |
 |---|---|
 | `badge` | Base badge class |
-| `badge.primary` … `badge.info` | Color variants |
-| `badge.outline` | Outline modifier |
-| `badge.sm` `badge.lg` | Sizes |
+| `badge.primary` `badge.secondary` `badge.neutral` `badge.accent` | Color variants |
+| `badge.success` `badge.danger` `badge.warning` `badge.info` | Semantic color variants |
+| `badge.outline` `badge.soft` `badge.dash` `badge.ghost` | Style modifiers |
+| `badge.xs` `badge.sm` `badge.md` `badge.lg` `badge.xl` | Sizes |
+
+Same stacking rules as buttons: colors + modifiers compose, the default
+(`secondary`) only kicks in when no color keyword is present.
 
 ### Pagination
 

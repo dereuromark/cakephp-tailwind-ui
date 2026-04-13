@@ -21,40 +21,7 @@ class HtmlHelper extends CoreHtmlHelper
      */
     public function badge(string $text, array $options = []): string
     {
-        $variants = ['primary', 'secondary', 'success', 'danger', 'warning', 'info'];
-        $sizes = ['sm', 'lg'];
-
-        $existing = $this->_toClassArray($options['class'] ?? null);
-        $hasVariant = false;
-
-        foreach ($variants as $variant) {
-            if (in_array($variant, $existing, true)) {
-                $hasVariant = true;
-                $options = $this->removeClasses($variant, $options);
-                $options = $this->injectClasses($this->classMap('badge.' . $variant), $options);
-            }
-        }
-
-        if (in_array('outline', $existing, true)) {
-            $options = $this->removeClasses('outline', $options);
-            $options = $this->injectClasses($this->classMap('badge.outline'), $options);
-        }
-
-        foreach ($sizes as $size) {
-            if (in_array($size, $existing, true)) {
-                $options = $this->removeClasses($size, $options);
-                $sizeClass = $this->classMap('badge.' . $size);
-                if ($sizeClass) {
-                    $options = $this->injectClasses($sizeClass, $options);
-                }
-            }
-        }
-
-        $options = $this->injectClasses($this->classMap('badge'), $options);
-
-        if (!$hasVariant) {
-            $options = $this->injectClasses($this->classMap('badge.secondary'), $options);
-        }
+        $options = $this->applyComponentClasses($options, 'badge', 'secondary');
 
         $tag = $options['tag'] ?? 'span';
         unset($options['tag']);

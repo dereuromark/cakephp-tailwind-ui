@@ -42,34 +42,75 @@ trait OptionsAwareTrait
         return (bool)array_intersect($classes, $existing);
     }
 
+    /**
+     * Color variants that suppress the default color fallback when any of them
+     * appear in the user's class list. Modifiers and sizes (outline, soft,
+     * ghost-as-modifier, sm/lg/...) don't suppress the default.
+     */
+    protected array $colorVariants = [
+        'primary',
+        'secondary',
+        'neutral',
+        'accent',
+        'success',
+        'danger',
+        'warning',
+        'info',
+    ];
+
     protected function applyButtonClasses(array $data): array
     {
-        $variants = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'outline'];
+        return $this->applyComponentClasses($data, 'btn', 'primary');
+    }
+
+    /**
+     * Strip semantic variant/size/modifier keywords from $data['class'] and
+     * inject the corresponding class map values for the given component prefix.
+     *
+     * The set of recognized keywords is derived from the class map: any key
+     * starting with `{$prefix}.` is treated as a semantic variant whose tail
+     * segment is the keyword to strip. This means apps can add custom keys
+     * (e.g. `badge.host`) via `TailwindUi.classMapOverrides` and they are
+     * recognized automatically without helper changes.
+     *
+     * @param array<string, mixed> $data Incoming options/data array.
+     * @param string $prefix Class map prefix (e.g. `btn`, `badge`).
+     * @param string $default Variant name used when no color variant is set.
+     *
+     * @return array<string, mixed>
+     */
+    protected function applyComponentClasses(array $data, string $prefix, string $default): array
+    {
+        $this->initClassMap();
+
+        $prefixDot = $prefix . '.';
+        $variants = [];
+        foreach (array_keys($this->_classMap) as $key) {
+            if (str_starts_with($key, $prefixDot)) {
+                $variants[] = substr($key, strlen($prefixDot));
+            }
+        }
+
         $existing = $this->_toClassArray($data['class'] ?? null);
-        $hasVariant = false;
+        $hasColor = false;
 
         foreach ($variants as $variant) {
-            if (in_array($variant, $existing, true)) {
-                $hasVariant = true;
-                $data = $this->removeClasses($variant, $data);
-                $data = $this->injectClasses($this->classMap('btn.' . $variant), $data);
+            if (!in_array($variant, $existing, true)) {
+                continue;
+            }
+            $data = $this->removeClasses($variant, $data);
+            $mapped = $this->classMap($prefixDot . $variant);
+            if ($mapped !== '') {
+                $data = $this->injectClasses($mapped, $data);
+            }
+            if (in_array($variant, $this->colorVariants, true)) {
+                $hasColor = true;
             }
         }
 
-        $sizes = ['sm', 'lg'];
-        foreach ($sizes as $size) {
-            if (in_array($size, $existing, true)) {
-                $data = $this->removeClasses($size, $data);
-                $sizeClass = $this->classMap('btn.' . $size);
-                if ($sizeClass) {
-                    $data = $this->injectClasses($sizeClass, $data);
-                }
-            }
-        }
-
-        $data = $this->injectClasses($this->classMap('btn'), $data);
-        if (!$hasVariant) {
-            $data = $this->injectClasses($this->classMap('btn.primary'), $data);
+        $data = $this->injectClasses($this->classMap($prefix), $data);
+        if (!$hasColor) {
+            $data = $this->injectClasses($this->classMap($prefixDot . $default), $data);
         }
 
         return $data;
