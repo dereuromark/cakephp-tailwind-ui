@@ -97,6 +97,37 @@ When a field has errors, the input gets the `form.validator` class
 The error message renders as `<p class="label text-error">` inside
 the same fieldset.
 
+### Tooltip error feedback
+
+```php
+$this->Form->control('email', ['feedbackStyle' => 'tooltip']);
+```
+
+When the field has errors, the input is wrapped in a daisyUI
+`tooltip tooltip-error tooltip-open` div containing the error text,
+and the block error paragraph below the input is suppressed.
+
+### Label tooltips
+
+```php
+$this->Form->control('username', ['tooltip' => 'Must be unique']);
+```
+
+Appends a small info icon to the label text, wrapped in a daisyUI
+`tooltip` span with the tooltip text as `data-tip`. Uses `form.labelTooltip`
+and `form.labelTooltipIcon` class map keys.
+
+### Static control (read-only)
+
+```php
+$this->Form->staticControl('slug', ['value' => 'my-post-slug']);
+```
+
+Renders the value as a `<p class="py-2 text-base-content">` (from
+`form.staticControl`) and adds a hidden field so the value still
+submits with the form. Wrapped in the same fieldset/div container
+as a regular control, so forms stay visually consistent.
+
 ### Input groups (prepend/append)
 
 ```php
