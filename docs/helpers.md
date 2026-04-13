@@ -66,9 +66,29 @@ $this->Form->submit('Delete', ['class' => 'danger']);
 $this->Form->submit('Cancel', ['class' => 'secondary outline sm']);
 ```
 
-Variants (`primary`, `secondary`, `success`, `danger`, `warning`, `info`),
-sizes (`sm`, `lg`), and `outline` are stripped from the class list and
-replaced with the equivalent class map values (e.g. `danger` → `btn-error`).
+Color variants (`primary`, `secondary`, `neutral`, `accent`, `success`,
+`danger`, `warning`, `info`), style modifiers (`outline`, `soft`, `dash`,
+`ghost`, `link`), and sizes (`xs`, `sm`, `md`, `lg`, `xl`) are stripped
+from the class list and replaced with the equivalent class map values
+(e.g. `danger` → `btn-error`). Colors and modifiers combine freely —
+`['class' => 'soft primary']` emits `btn btn-soft btn-primary`.
+
+The set of recognized keywords is derived from the class map at runtime,
+so adding a custom key (e.g. `btn.brand => 'btn-brand'` via
+`TailwindUi.classMapOverrides`) makes `brand` recognized as a **modifier**
+without any helper changes — meaning `['class' => 'brand']` emits
+`btn btn-brand btn-primary`, because the default primary color still
+applies to modifiers.
+
+If you want `brand` to act as a standalone color (suppressing the
+primary default), promote it via `Configure`:
+
+```php
+Configure::write('TailwindUi.colorVariants', ['brand']);
+```
+
+Then `['class' => 'brand']` emits `btn btn-brand`, and `['class' => 'soft brand']`
+stacks to `btn btn-soft btn-brand`.
 
 ### Validation errors
 
@@ -161,11 +181,16 @@ core `HtmlHelper`:
 <?= $this->Html->badge('New') ?>                                  // secondary
 <?= $this->Html->badge('Active', ['class' => 'success']) ?>
 <?= $this->Html->badge('Draft', ['class' => 'warning outline']) ?>
+<?= $this->Html->badge('Soft', ['class' => 'soft primary']) ?>
+<?= $this->Html->badge('Ghost', ['class' => 'ghost']) ?>
 <?= $this->Html->badge('3', ['class' => 'primary sm']) ?>
 ```
 
-Variants (`primary`, `secondary`, `success`, `danger`, `warning`, `info`),
-sizes (`sm`, `lg`), and `outline` are resolved from the class map.
+Color variants (`primary`, `secondary`, `neutral`, `accent`, `success`,
+`danger`, `warning`, `info`), style modifiers (`outline`, `soft`, `dash`,
+`ghost`), and sizes (`xs`, `sm`, `md`, `lg`, `xl`) are resolved from the
+class map. Colors and modifiers stack — `['class' => 'soft primary']`
+produces a soft-primary badge.
 
 ### `icon()`
 

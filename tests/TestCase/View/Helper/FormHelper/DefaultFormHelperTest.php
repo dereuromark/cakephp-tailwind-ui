@@ -64,6 +64,24 @@ class DefaultFormHelperTest extends FormHelperTestCase
         $this->assertStringContainsString('btn-error', $result);
     }
 
+    public function testSubmitWithGhostModifier(): void
+    {
+        $this->Form->create($this->article);
+        $result = $this->Form->submit('Cancel', ['class' => 'ghost']);
+        $this->assertStringContainsString('btn-ghost', $result);
+        // ghost is a modifier, so the primary default still applies
+        $this->assertStringContainsString('btn-primary', $result);
+    }
+
+    public function testSubmitWithSoftColor(): void
+    {
+        $this->Form->create($this->article);
+        $result = $this->Form->submit('Soft', ['class' => 'soft danger']);
+        $this->assertStringContainsString('btn-soft', $result);
+        $this->assertStringContainsString('btn-error', $result);
+        $this->assertStringNotContainsString('btn-primary', $result);
+    }
+
     public function testHelpText(): void
     {
         $this->Form->create($this->article);
