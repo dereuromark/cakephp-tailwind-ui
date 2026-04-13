@@ -65,27 +65,30 @@ DaisyUI (or whichever preset you're using) yourself.
 
 ### DaisyUI (default preset)
 
+The default preset targets modern DaisyUI 5 / Tailwind 4 setups.
+
 During development you can use the CDN:
 
 ```html
-<link href="https://cdn.jsdelivr.net/npm/daisyui@4/dist/full.min.css" rel="stylesheet" type="text/css" />
-<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 ```
 
 For production, install via npm:
 
 ```bash
-npm install -D tailwindcss@3 daisyui@4
+npm install -D tailwindcss@4 daisyui@5
 ```
 
-Then set up `tailwind.config.js` to scan your templates:
+Then import DaisyUI from your Tailwind entry stylesheet:
 
-```js
-module.exports = {
-  content: ['./templates/**/*.php'],
-  plugins: [require('daisyui')],
-};
+```css
+@import 'tailwindcss';
+@plugin "daisyui";
 ```
+
+If you're still on DaisyUI 4 / Tailwind 3, the emitted component class
+names are mostly compatible, but the recommended build setup differs.
 
 ### KTUI (Metronic preset)
 

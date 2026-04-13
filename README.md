@@ -80,7 +80,7 @@ Configure::write('TailwindUi.classMap', [
 | **PaginatorHelper** | `links()` method with join/flex container |
 | **FlashHelper** | Alert rendering with icons |
 | **BreadcrumbsHelper** | Breadcrumb navigation |
-| **HtmlHelper** | `badge()` and `icon()` methods |
+| **HtmlHelper** | `badge()`, `alert()`, and `icon()` methods |
 
 ## Class Map Presets
 

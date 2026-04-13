@@ -20,10 +20,11 @@ semantic component classes (`btn`, `input`, `alert`, `badge`, `card`,
 
 **Caveats:**
 
-- DaisyUI 4 targets Tailwind CSS 3
-- DaisyUI 5 targets Tailwind CSS 4 and uses a different API (`@plugin "daisyui";`)
-- The default class map is compatible with DaisyUI 4. For DaisyUI 5 the
-  class names are mostly unchanged, but the build setup differs
+- DaisyUI 5 targets Tailwind CSS 4 and uses the `@plugin "daisyui";`
+  stylesheet API
+- The default preset is designed around DaisyUI 5's fieldset/legend form idiom
+- DaisyUI 4 / Tailwind 3 are still mostly class-compatible, but the build
+  setup and some component conventions differ
 
 ## KTUI (Metronic)
 

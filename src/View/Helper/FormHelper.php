@@ -168,9 +168,6 @@ class FormHelper extends CoreFormHelper
      *
      * Core assigns a `for` attribute to non-grouped labels before our legend
      * template is applied. Strip it for fieldset/legend mode.
-     *
-     * @param array<string, mixed>|string|null $label
-     * @param array<string, mixed> $options
      */
     protected function _inputLabel(string $fieldName, array|string|null $label = null, array $options = []): string
     {

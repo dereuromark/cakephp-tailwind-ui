@@ -154,6 +154,10 @@ Same stacking rules as buttons: colors + modifiers compose, the default
 | `icon.prefix` | Class prefix (e.g. `ki-filled` for KTUI) |
 | `icon.size` | Size class (e.g. `size-5`) |
 
+In default SVG mode, the helper ships a small built-in path map for the
+icons used by the plugin/docs. For app-specific icons, pass a `content`
+option to `HtmlHelper::icon()` with the SVG path markup you want rendered.
+
 ### Cards, tables
 
 `card`, `card.header`, `card.body`, `card.footer`, `card.title`, `table`.

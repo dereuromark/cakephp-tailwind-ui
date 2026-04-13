@@ -45,6 +45,8 @@ class BreadcrumbsHelper extends CoreBreadcrumbsHelper
      * @param array|string $title
      * @param array|string|null $url
      * @param array<string, mixed> $options
+     *
+     * @return mixed
      */
     public function add(array|string $title, array|string|null $url = null, array $options = [])
     {
@@ -65,6 +67,8 @@ class BreadcrumbsHelper extends CoreBreadcrumbsHelper
      * @param array|string $title
      * @param array|string|null $url
      * @param array<string, mixed> $options
+     *
+     * @return mixed
      */
     public function prepend(array|string $title, array|string|null $url = null, array $options = [])
     {
@@ -72,7 +76,12 @@ class BreadcrumbsHelper extends CoreBreadcrumbsHelper
     }
 
     /**
+     * @param int $index
+     * @param string $title
+     * @param array|string|null $url
      * @param array<string, mixed> $options
+     *
+     * @return mixed
      */
     public function insertAt(int $index, string $title, array|string|null $url = null, array $options = [])
     {
@@ -81,6 +90,7 @@ class BreadcrumbsHelper extends CoreBreadcrumbsHelper
 
     /**
      * @param array<string, mixed> $options
+     *
      * @return array<string, mixed>
      */
     protected function _injectItemClass(array $options): array
@@ -106,6 +116,7 @@ class BreadcrumbsHelper extends CoreBreadcrumbsHelper
             foreach (array_reverse($this->crumbs, true) as $candidateKey => $crumb) {
                 if (isset($crumb['url'])) {
                     $key = $candidateKey;
+
                     break;
                 }
             }

@@ -259,6 +259,7 @@ first/prev/numbers/next/last in a container with the `pagination` class:
 
 ```php
 <?= $this->Paginator->links() ?>
+<?= $this->Paginator->links(['first' => false, 'last' => false]) ?>
 ```
 
 DaisyUI output:
@@ -374,5 +375,12 @@ produces a soft-primary badge.
 ```
 
 Renders an icon tag using the `icon.*` class map keys. DaisyUI preset
-outputs inline SVG (Heroicons by default); KTUI preset outputs
-`<i class="ki-filled ki-search"></i>`.
+outputs inline SVG for the bundled default icon set (`check`,
+`check-circle`, `exclamation-triangle`, `information-circle`, `pencil`,
+`search`); KTUI preset outputs `<i class="ki-filled ki-search"></i>`.
+
+For app-specific SVGs, pass path content explicitly:
+
+```php
+<?= $this->Html->icon('brand', ['content' => '<path d="..." />']) ?>
+```

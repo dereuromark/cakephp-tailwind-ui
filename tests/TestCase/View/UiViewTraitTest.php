@@ -7,8 +7,7 @@ namespace TailwindUi\Test\TestCase\View;
 use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
-use Cake\View\View;
-use TailwindUi\View\UiViewTrait;
+use TestApp\View\TestUiView;
 
 class UiViewTraitTest extends TestCase
 {
@@ -20,14 +19,12 @@ class UiViewTraitTest extends TestCase
 
     public function testInitializeUiKeepsExistingLayout(): void
     {
-        $view = new class (new ServerRequest([
+        $view = new TestUiView(new ServerRequest([
             'webroot' => '',
             'base' => '',
             'url' => '/',
             'params' => ['controller' => 'Articles', 'action' => 'index', 'plugin' => null],
-        ])) extends View {
-            use UiViewTrait;
-        };
+        ]));
         $view->setLayout('admin');
 
         $view->initializeUi();
@@ -37,14 +34,12 @@ class UiViewTraitTest extends TestCase
 
     public function testInitializeUiSetsPluginLayoutFromDefault(): void
     {
-        $view = new class (new ServerRequest([
+        $view = new TestUiView(new ServerRequest([
             'webroot' => '',
             'base' => '',
             'url' => '/',
             'params' => ['controller' => 'Articles', 'action' => 'index', 'plugin' => null],
-        ])) extends View {
-            use UiViewTrait;
-        };
+        ]));
 
         $view->initializeUi();
 

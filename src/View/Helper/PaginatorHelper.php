@@ -67,7 +67,9 @@ class PaginatorHelper extends CorePaginatorHelper
     }
 
     /**
+     * @param string $method
      * @param mixed $control
+     * @param string $defaultText
      * @param array<string, mixed> $options
      */
     protected function _renderNavLink(string $method, mixed $control, string $defaultText, array $options): string
