@@ -114,6 +114,6 @@ return [
         'multicheckboxContainerError' => '<fieldset class="{{fieldsetClass}}" role="group" aria-labelledby="{{groupId}}">{{content}}{{error}}{{help}}</fieldset>',
         'label' => '<legend{{attrs}}>{{text}}</legend>',
         'inputHelp' => '<p class="{{helperClass}}">{{text}}</p>',
-        'error' => '<p id="{{id}}" class="{{errorClass}}">{{content}}</p>',
+        'error' => '<p id="{{id}}" class="label text-error">{{content}}</p>',
     ],
 ];

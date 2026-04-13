@@ -178,6 +178,7 @@ class FormHelper extends CoreFormHelper
             $options['templateVars']['wrapperClass'] = $this->classMap('form.checkboxLabelWrapper');
             $options['templateVars']['groupId'] = $this->_domId($fieldName) . '-label';
         } elseif ($type === 'multicheckbox' || ($type === 'select' && ($options['multiple'] ?? null) === 'checkbox')) {
+            $options = $this->injectClasses($this->classMap('form.checkbox'), $options);
             $options['templateVars']['labelClass'] = $this->classMap('form.label');
             $options['templateVars']['groupId'] = $this->_domId($fieldName) . '-label';
         } elseif ($type === 'range') {
@@ -280,7 +281,13 @@ class FormHelper extends CoreFormHelper
      */
     protected function _inputContainerTemplate(array $options): string
     {
-        $inputContainerTemplate = $options['options']['type'] . 'Container' . $options['errorSuffix'];
+        $type = $options['options']['type'];
+        // Remap `select + multiple => checkbox` onto the multicheckbox template
+        // so the group fieldset gets its role/aria plumbing.
+        if ($type === 'select' && ($options['options']['multiple'] ?? null) === 'checkbox') {
+            $type = 'multicheckbox';
+        }
+        $inputContainerTemplate = $type . 'Container' . $options['errorSuffix'];
         if (!$this->templater()->get($inputContainerTemplate)) {
             $inputContainerTemplate = 'inputContainer' . $options['errorSuffix'];
         }
