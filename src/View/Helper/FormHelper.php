@@ -137,11 +137,15 @@ class FormHelper extends CoreFormHelper
             'labelOptions' => true,
             'help' => null,
             'switch' => false,
+            'tooltip' => null,
+            'feedbackStyle' => null,
         ];
 
         $help = $options['help'];
         $isSwitch = $options['switch'];
-        unset($options['help'], $options['switch']);
+        $tooltip = $options['tooltip'];
+        $feedbackStyle = $options['feedbackStyle'];
+        unset($options['help'], $options['switch'], $options['tooltip'], $options['feedbackStyle']);
 
         $parsedOptions = $this->_parseOptions($fieldName, $options);
         $type = $parsedOptions['type'];
@@ -163,6 +167,18 @@ class FormHelper extends CoreFormHelper
                 $options['label'] = ['class' => $labelClass, 'text' => $options['label']];
             } elseif (is_array($options['label'])) {
                 $options['label']['class'] = trim(($options['label']['class'] ?? '') . ' ' . $labelClass);
+            }
+
+            // Append tooltip icon to the label text if requested.
+            if ($tooltip !== null) {
+                $currentText = $options['label']['text'] ?? null;
+                if ($currentText === null) {
+                    $currentText = h($this->_inflect($fieldName));
+                } elseif (is_string($currentText)) {
+                    $currentText = h($currentText);
+                }
+                $options['label']['text'] = $currentText . $this->_renderLabelTooltip($tooltip);
+                $options['label']['escape'] = false;
             }
         }
 
@@ -242,11 +258,36 @@ class FormHelper extends CoreFormHelper
         $options['templateVars']['fieldsetClass'] = $fieldsetClass;
         $options['templateVars']['errorClass'] = $this->classMap('form.error');
 
+        // Tooltip error feedback: wrap the input in a floating tooltip div
+        // containing the error message and suppress the block error message.
+        if ($feedbackStyle === 'tooltip' && $isError) {
+            $errorText = $this->_formatErrorText($fieldName);
+            $tooltipClass = $this->classMap('form.errorTooltip');
+            $tooltipOpen = '<div class="' . $tooltipClass . '" data-tip="' . h($errorText) . '">';
+            $controlTemplates['formGroup'] = '{{label}}' . $tooltipOpen . '{{input}}</div>';
+            $controlTemplates['inputContainerError'] =
+                $controlTemplates['inputContainer'] ?? $controlTemplates['inputContainerError'];
+        }
+
         // Merge our control templates on top of user-supplied template overrides.
         $userTemplates = (array)$options['templates'];
         $options['templates'] = array_merge($controlTemplates, $userTemplates);
 
         return parent::control($fieldName, $options);
+    }
+
+    /**
+     * Flattens the validation errors for a given field into a single string
+     * suitable for use as a tooltip `data-tip` value.
+     */
+    protected function _formatErrorText(string $fieldName): string
+    {
+        $errors = $this->_getContext()->error($fieldName);
+        if (!$errors) {
+            return '';
+        }
+
+        return implode(', ', array_map('strval', $errors));
     }
 
     /**
@@ -271,6 +312,104 @@ class FormHelper extends CoreFormHelper
         );
 
         return parent::submit($caption, $options);
+    }
+
+    /**
+     * Renders a read-only control that displays the current value as a
+     * paragraph while still submitting it via a hidden field. Uses the same
+     * wrapper idiom (fieldset or horizontal div) as a real control so forms
+     * stay visually consistent.
+     *
+     * @param string $fieldName The field name.
+     * @param array<string, mixed> $options `label`, `help`, `value`, `escape` honored.
+     */
+    public function staticControl(string $fieldName, array $options = []): string
+    {
+        $options += [
+            'label' => null,
+            'help' => null,
+            'value' => null,
+            'escape' => true,
+        ];
+
+        $value = $options['value'] ?? $this->getSourceValue($fieldName);
+        $displayValue = $options['escape'] ? h((string)$value) : (string)$value;
+
+        $staticClass = $this->classMap('form.staticControl');
+        $staticParagraph = '<p class="' . $staticClass . '">' . $displayValue . '</p>';
+        $hidden = $this->hidden($fieldName, ['value' => (string)$value]);
+
+        $isHorizontal = $this->_align === static::ALIGN_HORIZONTAL;
+
+        // Build label fragment (legend in fieldset mode, label otherwise).
+        $labelHtml = '';
+        if ($options['label'] !== false) {
+            $labelText = is_string($options['label'])
+                ? $options['label']
+                : $this->_inflect($fieldName);
+            $labelClass = $this->_resolveLabelClass('text', $isHorizontal, false, false);
+            $tag = (!$isHorizontal && $this->classMap('form.fieldsetLegend') !== '') ? 'legend' : 'label';
+            $labelHtml = '<' . $tag . ' class="' . $labelClass . '">' . h($labelText) . '</' . $tag . '>';
+        }
+
+        // Build help fragment.
+        $helpHtml = '';
+        if ($options['help'] !== null) {
+            $helperClass = $this->classMap('form.helpText');
+            $tpl = $this->formTemplates()['inputHelp']
+                ?? $this->_defaultFormTemplates['inputHelp'];
+            $helpHtml = strtr($tpl, [
+                '{{helperClass}}' => $helperClass,
+                '{{text}}' => h($options['help']),
+            ]);
+        }
+
+        if ($isHorizontal) {
+            $containerClass = $this->classMap('form.containerHorizontal');
+
+            return '<div class="' . $containerClass . '">' . $labelHtml . $staticParagraph . $hidden . $helpHtml . '</div>';
+        }
+
+        $fieldsetClass = $this->classMap('form.fieldset');
+        if ($fieldsetClass === '') {
+            $fieldsetClass = $this->classMap('form.container');
+        }
+
+        return '<fieldset class="' . $fieldsetClass . '">' . $labelHtml . $staticParagraph . $hidden . $helpHtml . '</fieldset>';
+    }
+
+    /**
+     * Renders a label tooltip icon (info SVG inside a daisyUI `tooltip`
+     * wrapper). The resulting fragment is appended to the label text.
+     */
+    protected function _renderLabelTooltip(string $tooltipText): string
+    {
+        $wrapperClass = $this->classMap('form.labelTooltip');
+        $iconClass = $this->classMap('form.labelTooltipIcon');
+
+        // Small info SVG (heroicons information-circle). Inlined so this
+        // works without requiring the app to ship any icon font.
+        $icon = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" '
+            . 'viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" '
+            . 'class="' . $iconClass . '" aria-hidden="true">'
+            . '<path stroke-linecap="round" stroke-linejoin="round" '
+            . 'd="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />'
+            . '</svg>';
+
+        return '<span class="' . $wrapperClass . '" data-tip="' . h($tooltipText) . '">' . $icon . '</span>';
+    }
+
+    /**
+     * Returns a human-readable label for a field name, mimicking CakePHP's
+     * default label inflection (`user_name` → `User Name`).
+     */
+    protected function _inflect(string $fieldName): string
+    {
+        $parts = explode('.', $fieldName);
+        $last = end($parts);
+        $last = preg_replace('/_id$/', '', (string)$last) ?? $last;
+
+        return ucwords(str_replace('_', ' ', (string)$last));
     }
 
     /**
