@@ -143,6 +143,70 @@ class FormHelper extends CoreFormHelper
     /**
      * {@inheritDoc}
      *
+     * Fieldset legends must not carry a `for` attribute. Core label()
+     * generates it automatically, so strip it when we're rendering the
+     * preset's legend-style label.
+     */
+    public function label(string $fieldName, ?string $text = null, array $options = []): string
+    {
+        $legendClass = $this->classMap('form.fieldsetLegend');
+        $usesLegend = $legendClass !== '' && str_contains((string)($options['class'] ?? ''), $legendClass);
+        if ($legendClass !== '' && str_contains((string)($options['class'] ?? ''), $legendClass)) {
+            unset($options['for']);
+        }
+
+        $result = parent::label($fieldName, $text, $options);
+        if ($usesLegend) {
+            $result = preg_replace('/\sfor="[^"]*"/', '', $result) ?? $result;
+        }
+
+        return $result;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Core assigns a `for` attribute to non-grouped labels before our legend
+     * template is applied. Strip it for fieldset/legend mode.
+     *
+     * @param array<string, mixed>|string|null $label
+     * @param array<string, mixed> $options
+     */
+    protected function _inputLabel(string $fieldName, array|string|null $label = null, array $options = []): string
+    {
+        $options += ['id' => null, 'input' => null, 'nestedInput' => false, 'templateVars' => []];
+        $labelAttributes = ['templateVars' => $options['templateVars']];
+        if (is_array($label)) {
+            $labelText = null;
+            if (isset($label['text'])) {
+                $labelText = $label['text'];
+                unset($label['text']);
+            }
+            $labelAttributes = array_merge($labelAttributes, $label);
+        } else {
+            $labelText = $label;
+        }
+
+        $labelAttributes['for'] = $options['id'];
+        $usesLegend = $this->_align === static::ALIGN_DEFAULT
+            && $this->classMap('form.fieldsetLegend') !== ''
+            && ($options['type'] ?? null) !== 'checkbox';
+        if (in_array($options['type'], $this->_groupedInputTypes, true) || $usesLegend) {
+            $labelAttributes['for'] = false;
+        }
+        if ($options['nestedInput']) {
+            $labelAttributes['input'] = $options['input'];
+        }
+        if (isset($options['escape'])) {
+            $labelAttributes['escape'] = $options['escape'];
+        }
+
+        return $this->label($fieldName, $labelText, $labelAttributes);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * Applies Tailwind classes and the fieldset (or div) container markup.
      */
     public function control(string $fieldName, array $options = []): string
@@ -197,10 +261,21 @@ class FormHelper extends CoreFormHelper
             } else {
                 $labelClass = $this->_resolveLabelClass($type, $isHorizontal, $isGroupInput, $isSingleCheckbox);
             }
-            if ($options['label'] === null || is_string($options['label'])) {
+            if ($options['label'] === null) {
+                $options['label'] = ['class' => $labelClass];
+            } elseif (is_string($options['label'])) {
                 $options['label'] = ['class' => $labelClass, 'text' => $options['label']];
             } elseif (is_array($options['label'])) {
                 $options['label']['class'] = trim(($options['label']['class'] ?? '') . ' ' . $labelClass);
+            }
+
+            $usesLegend = !$isHorizontal && !$isInline && !$isSingleCheckbox
+                && $this->classMap('form.fieldsetLegend') !== '';
+            if ($usesLegend && is_array($options['label']) && !array_key_exists('for', $options['label'])) {
+                $options['label']['for'] = false;
+            }
+            if ($isGroupInput && is_array($options['label']) && !array_key_exists('id', $options['label'])) {
+                $options['label']['id'] = $this->_domId($fieldName) . '-label';
             }
 
             // Append tooltip icon to the label text if requested.

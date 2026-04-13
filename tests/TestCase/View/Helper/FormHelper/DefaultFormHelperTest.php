@@ -17,6 +17,8 @@ class DefaultFormHelperTest extends FormHelperTestCase
         $this->assertStringContainsString('fieldset-legend', $result);
         $this->assertStringContainsString('<fieldset class="fieldset"', $result);
         $this->assertStringContainsString('type="text"', $result);
+        $this->assertStringContainsString('>Title</legend>', $result);
+        $this->assertStringNotContainsString('for="title"', $result);
     }
 
     public function testSelectControl(): void
@@ -33,6 +35,7 @@ class DefaultFormHelperTest extends FormHelperTestCase
         $result = $this->Form->control('published');
         $this->assertStringContainsString('checkbox', $result);
         $this->assertStringContainsString('cursor-pointer', $result);
+        $this->assertStringContainsString(' Published</label>', $result);
     }
 
     public function testSwitchCheckbox(): void

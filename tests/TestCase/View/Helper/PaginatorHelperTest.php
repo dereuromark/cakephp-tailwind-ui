@@ -118,4 +118,20 @@ class PaginatorHelperTest extends TestCase
         $this->assertStringContainsString('class="flex items-center gap-1"', $result);
         $this->assertStringContainsString('kt-btn kt-btn-sm kt-btn-outline', $result);
     }
+
+    public function testLinksCanDisableEdgeControls(): void
+    {
+        $result = $this->Paginator->links([
+            'first' => false,
+            'prev' => false,
+            'next' => false,
+            'last' => false,
+        ]);
+
+        $this->assertStringNotContainsString('«', $result);
+        $this->assertStringNotContainsString('‹', $result);
+        $this->assertStringNotContainsString('›', $result);
+        $this->assertStringNotContainsString('»', $result);
+        $this->assertStringContainsString('>2<', $result);
+    }
 }

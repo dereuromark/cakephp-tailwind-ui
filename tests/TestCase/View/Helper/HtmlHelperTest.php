@@ -226,6 +226,16 @@ class HtmlHelperTest extends TestCase
         // Default DaisyUI uses svg tag
         $this->assertStringContainsString('<svg', $result);
         $this->assertStringContainsString('size-5', $result);
+        $this->assertStringContainsString('<path', $result);
+        $this->assertStringNotContainsString('data-icon=', $result);
+    }
+
+    public function testIconSizeOverride(): void
+    {
+        $result = $this->Html->icon('search', ['size' => 'size-4']);
+
+        $this->assertStringContainsString('size-4', $result);
+        $this->assertStringNotContainsString('size-5', $result);
     }
 
     public function testIconWithKtui(): void

@@ -30,7 +30,7 @@ trait UiViewTrait
             $this->helpers()->load($name, $config);
         }
         $layout = $options['layout'] ?? true;
-        if ($layout === true) {
+        if ($layout === true && $this->getLayout() === 'default') {
             $preset = Configure::read('TailwindUi.classMap');
             $layoutName = $preset === 'ktui' ? 'TailwindUi.ktui' : 'TailwindUi.default';
             $this->setLayout($layoutName);

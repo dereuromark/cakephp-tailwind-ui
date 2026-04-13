@@ -48,14 +48,43 @@ class PaginatorHelper extends CorePaginatorHelper
             'ellipsis' => '<span class="' . $itemClass . ' ' . $disabledClass . '">…</span>',
         ]);
 
-        $first = $this->first('«', $options);
-        $prev = $this->prev('‹', $options);
-        $numbers = $this->numbers($options);
-        $next = $this->next('›', $options);
-        $last = $this->last('»', $options);
+        $firstOption = $options['first'] ?? true;
+        $prevOption = $options['prev'] ?? true;
+        $numbersOption = $options['numbers'] ?? true;
+        $nextOption = $options['next'] ?? true;
+        $lastOption = $options['last'] ?? true;
+        unset($options['first'], $options['prev'], $options['numbers'], $options['next'], $options['last']);
+
+        $first = $this->_renderNavLink('first', $firstOption, '«', $options);
+        $prev = $this->_renderNavLink('prev', $prevOption, '‹', $options);
+        $numbers = $numbersOption === false ? '' : $this->numbers($options);
+        $next = $this->_renderNavLink('next', $nextOption, '›', $options);
+        $last = $this->_renderNavLink('last', $lastOption, '»', $options);
 
         return '<div class="' . $paginationClass . '">'
             . $first . $prev . $numbers . $next . $last
             . '</div>';
+    }
+
+    /**
+     * @param mixed $control
+     * @param array<string, mixed> $options
+     */
+    protected function _renderNavLink(string $method, mixed $control, string $defaultText, array $options): string
+    {
+        if ($control === false) {
+            return '';
+        }
+
+        $text = $defaultText;
+        $linkOptions = $options;
+        if (is_string($control) || is_int($control)) {
+            $text = (string)$control;
+        } elseif (is_array($control)) {
+            $text = (string)($control['text'] ?? $defaultText);
+            $linkOptions = array_merge($options, $control['options'] ?? []);
+        }
+
+        return $this->{$method}($text, $linkOptions);
     }
 }

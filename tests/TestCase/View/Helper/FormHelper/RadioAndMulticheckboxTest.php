@@ -21,7 +21,9 @@ class RadioAndMulticheckboxTest extends FormHelperTestCase
 
         $this->assertStringContainsString('<fieldset', $result);
         $this->assertStringContainsString('role="group"', $result);
+        $this->assertStringContainsString('id="status-label"', $result);
         $this->assertStringContainsString('aria-labelledby="status-label"', $result);
+        $this->assertStringContainsString('>Status</legend>', $result);
     }
 
     public function testRadioItemsHaveRadioClass(): void
@@ -48,6 +50,7 @@ class RadioAndMulticheckboxTest extends FormHelperTestCase
 
         $this->assertStringContainsString('<fieldset', $result);
         $this->assertStringContainsString('role="group"', $result);
+        $this->assertStringContainsString('id="tags-ids-label"', $result);
         $this->assertStringContainsString('aria-labelledby="tags-ids-label"', $result);
         $this->assertStringContainsString('type="checkbox"', $result);
     }

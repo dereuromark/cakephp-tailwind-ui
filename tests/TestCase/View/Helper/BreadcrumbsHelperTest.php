@@ -64,6 +64,7 @@ class BreadcrumbsHelperTest extends TestCase
         // Last crumb (Articles) has no URL → uses itemWithoutLink → gets active class
         $this->assertStringContainsString('font-semibold', $result);
         $this->assertStringContainsString('<span', $result);
+        $this->assertStringContainsString('aria-current="page"', $result);
     }
 
     public function testNonLastCrumbHasLink(): void
@@ -86,5 +87,26 @@ class BreadcrumbsHelperTest extends TestCase
         $result = $this->Breadcrumbs->render();
         $this->assertStringContainsString('text-sm text-muted-foreground', $result);
         $this->assertStringContainsString('text-foreground font-medium', $result);
+    }
+
+    public function testCrumbAttributesArePreserved(): void
+    {
+        $this->Breadcrumbs->add('Home', '/', ['class' => 'home-item', 'data-test' => 'x']);
+        $this->Breadcrumbs->add('Articles');
+
+        $result = $this->Breadcrumbs->render();
+        $this->assertStringContainsString('class="home-item"', $result);
+        $this->assertStringContainsString('data-test="x"', $result);
+    }
+
+    public function testLastLinkedCrumbCanBeMarkedActive(): void
+    {
+        $this->Breadcrumbs->setConfig('ariaCurrent', 'lastWithLink');
+        $this->Breadcrumbs->add('Home', '/');
+        $this->Breadcrumbs->add('Articles', '/articles');
+        $this->Breadcrumbs->add('View');
+
+        $result = $this->Breadcrumbs->render();
+        $this->assertMatchesRegularExpression('/<a href="\/articles"[^>]*aria-current="page"/', $result);
     }
 }
