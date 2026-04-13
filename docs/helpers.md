@@ -90,6 +90,19 @@ via the `form.input.{size}` / `form.select.{size}` / `form.textarea.{size}`
 class map keys. Unmapped sizes (e.g. KTUI has no size equivalents) are
 silently ignored.
 
+### Floating labels
+
+```php
+$this->Form->control('email', ['floating' => true]);
+$this->Form->control('status', ['options' => $opts, 'floating' => true]);
+```
+
+Wraps the input in a daisyUI `<label class="floating-label">` with an
+inline `<span>` for the label text. A placeholder is automatically set
+(daisyUI's floating-label needs `:placeholder-shown` to detect emptiness),
+or you can supply your own. Supported on text-style inputs, selects, and
+textareas; ignored for checkbox/radio. Class map key: `form.floatingLabel`.
+
 ### Validation errors
 
 When a field has errors, the input gets the `form.validator` class

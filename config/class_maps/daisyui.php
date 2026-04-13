@@ -27,6 +27,7 @@ return [
         'form.inputGroupContainer' => 'join w-full',
         'form.inputGroupText' => 'join-item btn btn-ghost no-animation',
         'form.checkboxLabelWrapper' => 'mt-1 [&>label]:inline-flex [&>label]:items-center [&>label]:gap-2 [&>label]:cursor-pointer',
+        'form.floatingLabel' => 'floating-label',
         'form.input.xs' => 'input-xs',
         'form.input.sm' => 'input-sm',
         'form.input.md' => 'input-md',

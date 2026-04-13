@@ -27,6 +27,7 @@ return [
         'form.inputGroupContainer' => 'flex items-center w-full',
         'form.inputGroupText' => 'px-3 bg-muted border border-border rounded-l-md text-sm',
         'form.checkboxLabelWrapper' => 'mt-1 [&>label]:inline-flex [&>label]:items-center [&>label]:gap-2 [&>label]:cursor-pointer',
+        'form.floatingLabel' => '',
         'form.input.xs' => '',
         'form.input.sm' => '',
         'form.input.md' => '',
