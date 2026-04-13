@@ -90,6 +90,28 @@ via the `form.input.{size}` / `form.select.{size}` / `form.textarea.{size}`
 class map keys. Unmapped sizes (e.g. KTUI has no size equivalents) are
 silently ignored.
 
+### Rating
+
+```php
+$this->Form->rating('quality');                                // 5 stars, default
+$this->Form->rating('quality', ['max' => 10, 'value' => 7]);
+$this->Form->rating('quality', ['size' => 'lg', 'allowEmpty' => false]);
+```
+
+Renders a daisyUI `rating` component as a horizontal row of radio
+inputs styled as star masks. Wrapped in the standard fieldset/horizontal
+container so it composes with the rest of the form. Options:
+
+- `max` — number of stars (default `5`).
+- `value` — currently selected rating (`null`/`0` for no rating).
+- `size` — `xs`/`sm`/`md`/`lg`/`xl`.
+- `allowEmpty` — whether to render a hidden "no rating" radio at value `0` so users can clear the rating (default `true`).
+- `label`, `help` — same semantics as `control()`.
+
+Class map keys: `form.rating`, `form.ratingItem`, `form.ratingHidden`,
+`form.rating.{size}`. KTUI renders a fallback flex row of plain
+checkboxes — KTUI has no rating component natively.
+
 ### Validation errors
 
 When a field has errors, the input gets the `form.validator` class
