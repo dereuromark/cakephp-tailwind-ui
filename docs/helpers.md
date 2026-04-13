@@ -210,6 +210,10 @@ $this->Form->control('website', ['prepend' => 'https://']);
 $this->Form->control('email', ['append' => '@example.com']);
 ```
 
+> Note: `prepend`/`append` is **not supported on `type => 'file'` controls**.
+> CakePHP's core file widget doesn't compose with the daisyUI `join`
+> wrapper, so the keys are silently dropped if passed.
+
 ### Submit buttons with variants
 
 ```php

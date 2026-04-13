@@ -87,4 +87,22 @@ class InputGroupTest extends FormHelperTestCase
         $this->assertStringContainsString('join w-full', $result);
         $this->assertStringContainsString('<select', $result);
     }
+
+    public function testFileInputDropsPrependAndAppendSilently(): void
+    {
+        $this->Form->create($this->article);
+        $result = $this->Form->control('avatar', [
+            'type' => 'file',
+            'prepend' => '$',
+            'append' => '.png',
+        ]);
+
+        // File inputs don't compose with the join wrapper; addons are dropped.
+        $this->assertStringNotContainsString('join w-full', $result);
+        $this->assertStringNotContainsString('>$</span>', $result);
+        $this->assertStringNotContainsString('>.png</span>', $result);
+        // The file input itself still renders normally.
+        $this->assertStringContainsString('type="file"', $result);
+        $this->assertStringContainsString('file-input', $result);
+    }
 }
