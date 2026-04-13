@@ -81,6 +81,7 @@ The full list of keys is in `config/class_maps/daisyui.php`. Summary:
 | `form.container` | Container class for each control in vertical (non-fieldset) layout |
 | `form.containerHorizontal` | Container class for each control in horizontal layout |
 | `form.checkboxLabelWrapper` | Wrapper class for the single-checkbox label row |
+| `form.checkboxLabelInline` | Class on the `<label>` that wraps a single checkbox + its text |
 | `form.inputGroupContainer` | Wrapper class when prepend/append is used |
 | `form.inputGroupText` | Addon (prepend/append) class |
 

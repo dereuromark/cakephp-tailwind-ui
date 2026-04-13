@@ -322,8 +322,10 @@ class FormHelper extends CoreFormHelper
 
         // Floating label mode: replace the fieldset/legend structure with a
         // daisyUI `<label class="floating-label">` wrapping a <span> + input.
-        // Only valid for text-style inputs and selects/textareas.
-        if ($floating && in_array($type, ['text', 'email', 'password', 'url', 'tel', 'search', 'number', 'select', 'textarea'], true)) {
+        // Only valid for text-style inputs and selects/textareas. Skipped in
+        // inline alignment because floating labels need vertical headroom and
+        // sr-only labels can't host visible floating text.
+        if ($floating && !$isInline && in_array($type, ['text', 'email', 'password', 'url', 'tel', 'search', 'number', 'select', 'textarea'], true)) {
             $floatingClass = $this->classMap('form.floatingLabel');
             if ($floatingClass !== '') {
                 // daisyUI's floating-label needs a placeholder set on the input.
@@ -377,6 +379,13 @@ class FormHelper extends CoreFormHelper
         $max = max(1, (int)$options['max']);
         $current = $options['value'] ?? $this->_getContext()->val($fieldName);
         $current = $current !== null ? (int)$current : null;
+        // Clamp out-of-range values so the corresponding star still gets
+        // checked. Negative values fall through to the empty radio.
+        if ($current !== null && $current > $max) {
+            $current = $max;
+        } elseif ($current !== null && $current < 0) {
+            $current = 0;
+        }
         $allowEmpty = (bool)$options['allowEmpty'];
 
         $ratingClass = $this->classMap('form.rating');
@@ -740,7 +749,12 @@ class FormHelper extends CoreFormHelper
         bool $isSingleCheckbox,
     ): string {
         if ($isSingleCheckbox) {
-            return 'inline-flex items-center gap-2 cursor-pointer';
+            $checkboxLabel = $this->classMap('form.checkboxLabelInline');
+            if ($checkboxLabel === '') {
+                $checkboxLabel = 'inline-flex items-center gap-2 cursor-pointer';
+            }
+
+            return $checkboxLabel;
         }
 
         if ($isHorizontal) {

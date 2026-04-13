@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace TailwindUi\View\Widget;
 
-use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\View\Form\ContextInterface;
+use TailwindUi\View\PresetLoader;
 
 trait InputGroupTrait
 {
@@ -63,46 +62,15 @@ trait InputGroupTrait
         return str_contains($html, '<button') || str_contains($html, 'type="submit"');
     }
 
-    protected function _loadClassMap(): array
-    {
-        $pluginPath = Plugin::path('TailwindUi');
-        $base = $this->_extractClassMap(include $pluginPath . 'config/class_maps/daisyui.php');
-        $configured = Configure::read('TailwindUi.classMap');
-        if (is_string($configured)) {
-            $presetFile = $pluginPath . 'config/class_maps/' . $configured . '.php';
-            if (file_exists($presetFile)) {
-                $base = array_merge($base, $this->_extractClassMap(include $presetFile));
-            }
-        } elseif (is_array($configured)) {
-            $base = array_merge($base, $this->_extractClassMap($configured));
-        }
-        $overrides = Configure::read('TailwindUi.classMapOverrides');
-        if (is_array($overrides)) {
-            $base = array_merge($base, $this->_extractClassMap($overrides));
-        }
-
-        return $base;
-    }
-
     /**
-     * Accepts either the legacy flat class-map array or the extended nested
-     * shape `['classMap' => [...], 'templates' => [...]]` and returns just the
-     * class map portion.
-     *
-     * @param array<string, mixed> $preset
+     * Returns the merged class map for the active preset. Delegates to the
+     * shared `PresetLoader` so widgets and helpers can never drift on how
+     * presets are loaded.
      *
      * @return array<string, string>
      */
-    protected function _extractClassMap(array $preset): array
+    protected function _loadClassMap(): array
     {
-        if (isset($preset['classMap']) && is_array($preset['classMap'])) {
-            /** @var array<string, string> $map */
-            $map = $preset['classMap'];
-
-            return $map;
-        }
-
-        /** @var array<string, string> $preset */
-        return $preset;
+        return PresetLoader::classMap();
     }
 }
