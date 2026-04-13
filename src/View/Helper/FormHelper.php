@@ -321,6 +321,130 @@ class FormHelper extends CoreFormHelper
     }
 
     /**
+     * Renders a daisyUI rating control — a horizontal row of radio inputs
+     * styled as star masks. Supports the same fieldset/legend wrapper as
+     * other controls so it composes with the rest of the form.
+     *
+     * @param string $fieldName The field name.
+     * @param array<string, mixed> $options Supported keys:
+     *   - `max` int (default 5): number of stars.
+     *   - `value` int|null: the currently selected rating (1..max). Falls
+     *      back to the form context value, then to null.
+     *   - `size` string|null: rating size (xs/sm/md/lg/xl).
+     *   - `allowEmpty` bool (default true): whether to include a hidden
+     *      "no rating" radio at value 0 so users can clear the rating.
+     *   - `label`, `help` — same semantics as control().
+     */
+    public function rating(string $fieldName, array $options = []): string
+    {
+        $options += [
+            'max' => 5,
+            'value' => null,
+            'size' => null,
+            'allowEmpty' => true,
+            'label' => null,
+            'help' => null,
+        ];
+
+        $max = max(1, (int)$options['max']);
+        $current = $options['value'] ?? $this->_getContext()->val($fieldName);
+        $current = $current !== null ? (int)$current : null;
+        $allowEmpty = (bool)$options['allowEmpty'];
+
+        $ratingClass = $this->classMap('form.rating');
+        $itemClass = $this->classMap('form.ratingItem');
+        $hiddenClass = $this->classMap('form.ratingHidden');
+
+        if ($options['size'] !== null) {
+            $sizeClass = $this->classMap('form.rating.' . $options['size']);
+            if ($sizeClass !== '') {
+                $ratingClass = trim($ratingClass . ' ' . $sizeClass);
+            }
+        }
+
+        $name = $this->_buildDomName($fieldName);
+        $idBase = $this->_domId($fieldName);
+
+        $html = '<div class="' . $ratingClass . '">';
+        if ($allowEmpty) {
+            $checked = $current === null || $current === 0 ? ' checked="checked"' : '';
+            $html .= '<input type="radio" name="' . h($name) . '" value="0"'
+                . ' id="' . h($idBase) . '-0"'
+                . ' class="' . $hiddenClass . '"'
+                . $checked . ' aria-label="No rating">';
+        }
+        for ($i = 1; $i <= $max; $i++) {
+            $checked = $current === $i ? ' checked="checked"' : '';
+            $html .= '<input type="radio" name="' . h($name) . '" value="' . $i . '"'
+                . ' id="' . h($idBase) . '-' . $i . '"'
+                . ' class="' . $itemClass . '"'
+                . $checked . ' aria-label="' . $i . ' star' . ($i === 1 ? '' : 's') . '">';
+        }
+        $html .= '</div>';
+
+        // Wrap in the standard control container (fieldset/div + label).
+        return $this->_wrapCustomControl($fieldName, $html, $options['label'], $options['help']);
+    }
+
+    /**
+     * Wraps a custom-rendered widget HTML in the standard fieldset/horizontal
+     * div container used by control(), with optional label and help text.
+     * Used by rating() and any other helpers that emit custom inner markup
+     * but still want the consistent outer wrapper.
+     */
+    protected function _wrapCustomControl(
+        string $fieldName,
+        string $widgetHtml,
+        mixed $label,
+        ?string $help,
+    ): string {
+        $isHorizontal = $this->_align === static::ALIGN_HORIZONTAL;
+
+        $labelHtml = '';
+        if ($label !== false) {
+            $labelText = is_string($label) ? $label : $this->_inflect($fieldName);
+            $labelClass = $this->_resolveLabelClass('text', $isHorizontal, false, false);
+            $tag = (!$isHorizontal && $this->classMap('form.fieldsetLegend') !== '') ? 'legend' : 'label';
+            $labelHtml = '<' . $tag . ' class="' . $labelClass . '">' . h($labelText) . '</' . $tag . '>';
+        }
+
+        $helpHtml = '';
+        if ($help !== null) {
+            $helperClass = $this->classMap('form.helpText');
+            $tpl = $this->formTemplates()['inputHelp']
+                ?? $this->_defaultFormTemplates['inputHelp'];
+            $helpHtml = strtr($tpl, [
+                '{{helperClass}}' => $helperClass,
+                '{{text}}' => h($help),
+            ]);
+        }
+
+        if ($isHorizontal) {
+            $containerClass = $this->classMap('form.containerHorizontal');
+
+            return '<div class="' . $containerClass . '">' . $labelHtml . $widgetHtml . $helpHtml . '</div>';
+        }
+
+        $fieldsetClass = $this->classMap('form.fieldset');
+        if ($fieldsetClass === '') {
+            $fieldsetClass = $this->classMap('form.container');
+        }
+
+        return '<fieldset class="' . $fieldsetClass . '">' . $labelHtml . $widgetHtml . $helpHtml . '</fieldset>';
+    }
+
+    /**
+     * Returns the HTML name attribute for a field path.
+     */
+    protected function _buildDomName(string $fieldName): string
+    {
+        $parts = explode('.', $fieldName);
+        $first = array_shift($parts);
+
+        return $parts ? $first . '[' . implode('][', $parts) . ']' : $first;
+    }
+
+    /**
      * Flattens the validation errors for a given field into a single string
      * suitable for use as a tooltip `data-tip` value.
      */
