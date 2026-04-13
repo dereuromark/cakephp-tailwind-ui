@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace TailwindUi\View\Helper;
 
+use Cake\Core\Configure;
+
 trait OptionsAwareTrait
 {
     use ClassMapTrait;
@@ -43,9 +45,13 @@ trait OptionsAwareTrait
     }
 
     /**
-     * Color variants that suppress the default color fallback when any of them
-     * appear in the user's class list. Modifiers and sizes (outline, soft,
-     * ghost-as-modifier, sm/lg/...) don't suppress the default.
+     * Default color variants. Any of these appearing in the user's class list
+     * suppress the per-component default color fallback. Modifiers and sizes
+     * (outline, soft, ghost-as-modifier, sm/lg/...) don't suppress it.
+     *
+     * Apps can extend this list via `Configure::write('TailwindUi.colorVariants', [...])`
+     * to promote custom class-map keys (e.g. a project-specific `btn.brand`)
+     * into color variants — see `colorVariants()`.
      */
     protected array $colorVariants = [
         'primary',
@@ -57,6 +63,22 @@ trait OptionsAwareTrait
         'warning',
         'info',
     ];
+
+    /**
+     * Returns the effective color-variant list, including any names added via
+     * `Configure::write('TailwindUi.colorVariants', [...])`.
+     *
+     * @return array<int, string>
+     */
+    protected function colorVariants(): array
+    {
+        $extra = Configure::read('TailwindUi.colorVariants');
+        if (!is_array($extra) || !$extra) {
+            return $this->colorVariants;
+        }
+
+        return array_values(array_unique(array_merge($this->colorVariants, $extra)));
+    }
 
     protected function applyButtonClasses(array $data): array
     {
@@ -92,6 +114,7 @@ trait OptionsAwareTrait
         }
 
         $existing = $this->_toClassArray($data['class'] ?? null);
+        $colorVariants = $this->colorVariants();
         $hasColor = false;
 
         foreach ($variants as $variant) {
@@ -103,7 +126,7 @@ trait OptionsAwareTrait
             if ($mapped !== '') {
                 $data = $this->injectClasses($mapped, $data);
             }
-            if (in_array($variant, $this->colorVariants, true)) {
+            if (in_array($variant, $colorVariants, true)) {
                 $hasColor = true;
             }
         }

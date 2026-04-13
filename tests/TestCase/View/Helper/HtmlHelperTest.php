@@ -109,6 +109,25 @@ class HtmlHelperTest extends TestCase
         $this->assertStringNotContainsString('"host', $result);
     }
 
+    public function testBadgeCustomColorViaConfigure(): void
+    {
+        Configure::write('TailwindUi.classMapOverrides', [
+            'badge.brand' => 'badge-brand',
+        ]);
+        Configure::write('TailwindUi.colorVariants', ['brand']);
+        $this->Html = new HtmlHelper($this->View);
+
+        $result = $this->Html->badge('Brand', ['class' => 'brand']);
+        $this->assertStringContainsString('badge-brand', $result);
+        // brand is promoted to a color → secondary default is suppressed
+        $this->assertStringNotContainsString('badge-secondary', $result);
+
+        $result = $this->Html->badge('Soft brand', ['class' => 'soft brand']);
+        $this->assertStringContainsString('badge-soft', $result);
+        $this->assertStringContainsString('badge-brand', $result);
+        $this->assertStringNotContainsString('badge-secondary', $result);
+    }
+
     public function testBadgeEscapesText(): void
     {
         $result = $this->Html->badge('<b>bold</b>');

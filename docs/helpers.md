@@ -75,8 +75,20 @@ from the class list and replaced with the equivalent class map values
 
 The set of recognized keywords is derived from the class map at runtime,
 so adding a custom key (e.g. `btn.brand => 'btn-brand'` via
-`TailwindUi.classMapOverrides`) makes `['class' => 'brand']` work without
-any helper changes.
+`TailwindUi.classMapOverrides`) makes `brand` recognized as a **modifier**
+without any helper changes — meaning `['class' => 'brand']` emits
+`btn btn-brand btn-primary`, because the default primary color still
+applies to modifiers.
+
+If you want `brand` to act as a standalone color (suppressing the
+primary default), promote it via `Configure`:
+
+```php
+Configure::write('TailwindUi.colorVariants', ['brand']);
+```
+
+Then `['class' => 'brand']` emits `btn btn-brand`, and `['class' => 'soft brand']`
+stacks to `btn btn-soft btn-brand`.
 
 ### Validation errors
 

@@ -89,9 +89,15 @@ The full list of keys is in `config/class_maps/daisyui.php`. Summary:
 Colors and modifiers stack freely: `['class' => 'soft primary']` emits
 `btn btn-soft btn-primary`. Sizes and modifiers don't suppress the
 default color — `['class' => 'ghost']` still gets `btn-primary` applied.
-Any custom key matching `btn.*` added via overrides is automatically
-recognized as a modifier (add the name to the `colorVariants` list to
-treat it as a color).
+
+Custom keys added via `TailwindUi.classMapOverrides` are recognized
+automatically — but as **modifiers**, so the default color still applies
+on top (`['class' => 'brand']` → `btn btn-brand btn-primary`). To make a
+custom key act as a standalone color, promote it via Configure:
+
+```php
+Configure::write('TailwindUi.colorVariants', ['brand']);
+```
 
 ### Alerts / flash
 
