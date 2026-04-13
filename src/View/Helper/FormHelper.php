@@ -27,6 +27,15 @@ class FormHelper extends CoreFormHelper
     public const ALIGN_HORIZONTAL = 'horizontal';
 
     /**
+     * Alignment constant for inline (single-row) layout. Used for search
+     * and filter bars. Labels render as screen-reader-only, help text is
+     * suppressed, and all controls flow in one flex row.
+     *
+     * @var string
+     */
+    public const ALIGN_INLINE = 'inline';
+
+    /**
      * Current form alignment.
      */
     protected string $_align = self::ALIGN_DEFAULT;
@@ -103,7 +112,14 @@ class FormHelper extends CoreFormHelper
         $this->_align = $options['align'] ?? static::ALIGN_DEFAULT;
         unset($options['align']);
 
-        return parent::create($context, $options);
+        $output = parent::create($context, $options);
+
+        if ($this->_align === static::ALIGN_INLINE) {
+            $wrapperClass = $this->classMap('form.inlineWrapper');
+            $output .= '<div class="' . $wrapperClass . '">';
+        }
+
+        return $output;
     }
 
     /**
@@ -113,7 +129,12 @@ class FormHelper extends CoreFormHelper
      */
     public function end(array $secureAttributes = []): string
     {
-        $result = parent::end($secureAttributes);
+        $prefix = '';
+        if ($this->_align === static::ALIGN_INLINE) {
+            $prefix = '</div>';
+        }
+
+        $result = $prefix . parent::end($secureAttributes);
         $this->_align = static::ALIGN_DEFAULT;
 
         return $result;
@@ -150,15 +171,20 @@ class FormHelper extends CoreFormHelper
         unset($options['size']);
 
         $isHorizontal = $this->_align === static::ALIGN_HORIZONTAL;
+        $isInline = $this->_align === static::ALIGN_INLINE;
         $isSingleCheckbox = $type === 'checkbox';
         $isGroupInput = $type === 'radio' || $type === 'multicheckbox'
             || ($type === 'select' && ($options['multiple'] ?? null) === 'checkbox');
 
-        $controlTemplates = $this->_buildControlTemplates($isHorizontal);
+        $controlTemplates = $this->_buildControlTemplates($isHorizontal || $isInline);
 
-        // Resolve label class (legend in fieldset mode, label otherwise).
+        // Resolve label class (legend in fieldset mode, sr-only in inline, label otherwise).
         if ($options['label'] !== false) {
-            $labelClass = $this->_resolveLabelClass($type, $isHorizontal, $isGroupInput, $isSingleCheckbox);
+            if ($isInline) {
+                $labelClass = $this->classMap('form.labelInline');
+            } else {
+                $labelClass = $this->_resolveLabelClass($type, $isHorizontal, $isGroupInput, $isSingleCheckbox);
+            }
             if ($options['label'] === null || is_string($options['label'])) {
                 $options['label'] = ['class' => $labelClass, 'text' => $options['label']];
             } elseif (is_array($options['label'])) {
@@ -212,8 +238,10 @@ class FormHelper extends CoreFormHelper
         }
 
         // Build help fragment (wraps with the preset's inputHelp template).
+        // Inline mode suppresses help text since there's no room for it in
+        // a single-row layout.
         $helpHtml = '';
-        if ($help !== null) {
+        if ($help !== null && !$isInline) {
             $helperClass = $this->classMap('form.helpText');
             $helpId = $this->_domId($fieldName) . '-help';
             $helpTpl = $controlTemplates['inputHelp'] ?? '<div class="{{helperClass}}">{{text}}</div>';
@@ -229,11 +257,15 @@ class FormHelper extends CoreFormHelper
         }
 
         // Stash template vars.
-        $containerClass = $isHorizontal
-            ? $this->classMap('form.containerHorizontal')
-            : $this->classMap('form.container');
+        if ($isHorizontal) {
+            $containerClass = $this->classMap('form.containerHorizontal');
+        } elseif ($isInline) {
+            $containerClass = $this->classMap('form.containerInline');
+        } else {
+            $containerClass = $this->classMap('form.container');
+        }
         $fieldsetClass = $this->classMap('form.fieldset');
-        if ($fieldsetClass === '') {
+        if ($fieldsetClass === '' || $isInline) {
             $fieldsetClass = $containerClass;
         }
 
@@ -259,7 +291,10 @@ class FormHelper extends CoreFormHelper
         if (!isset($options['templateVars'])) {
             $options['templateVars'] = [];
         }
-        $options['templateVars']['containerClass'] = $this->classMap('form.container');
+        $submitContainerKey = $this->_align === static::ALIGN_INLINE
+            ? 'form.containerInline'
+            : 'form.container';
+        $options['templateVars']['containerClass'] = $this->classMap($submitContainerKey);
 
         $options = $this->applyButtonClasses($options);
 
