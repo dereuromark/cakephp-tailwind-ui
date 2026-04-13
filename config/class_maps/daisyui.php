@@ -118,6 +118,7 @@ return [
         'alert' => 'alert',
         'alert.success' => 'alert-success',
         'alert.error' => 'alert-error',
+        'alert.danger' => 'alert-error',
         'alert.warning' => 'alert-warning',
         'alert.info' => 'alert-info',
         'alert.default' => 'alert-info',

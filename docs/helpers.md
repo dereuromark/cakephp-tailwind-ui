@@ -324,8 +324,26 @@ The last crumb automatically gets the `breadcrumbs.active` class.
 
 ## HtmlHelper
 
-`TailwindUi\View\Helper\HtmlHelper` adds two methods on top of CakePHP's
+`TailwindUi\View\Helper\HtmlHelper` adds three methods on top of CakePHP's
 core `HtmlHelper`:
+
+### `alert()`
+
+```php
+<?= $this->Html->alert('Heads up') ?>                          // info (default)
+<?= $this->Html->alert('Saved', ['class' => 'success']) ?>
+<?= $this->Html->alert('Failed', ['class' => 'danger']) ?>     // → alert-error
+<?= $this->Html->alert('Heads up', ['class' => 'warning']) ?>
+<?= $this->Html->alert('<strong>raw</strong>', ['escape' => false]) ?>
+<?= $this->Html->alert('Note', ['tag' => 'aside']) ?>
+```
+
+Renders a daisyUI `alert` for one-shot inline notices that don't go
+through the session/flash pipeline. Variants (`success`, `danger`/
+`error`, `warning`, `info`) resolve through the same class-map
+machinery as `badge()` and form buttons; `danger` is accepted as an
+alias for daisyUI's `error`. Default variant is `info`. Always emits
+`role="alert"` for screen readers unless overridden.
 
 ### `badge()`
 

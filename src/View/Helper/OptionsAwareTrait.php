@@ -60,6 +60,13 @@ trait OptionsAwareTrait
         'accent',
         'success',
         'danger',
+        // `error` is the daisyUI-native name for the danger color and is
+        // recognized so users who reach for it on alerts (where
+        // `alert.error` is a class-map key) get the expected behavior.
+        // Components without an `.error` key (buttons, badges) are
+        // unaffected — the variant resolver only iterates keys that
+        // actually exist in the class map.
+        'error',
         'warning',
         'info',
     ];
