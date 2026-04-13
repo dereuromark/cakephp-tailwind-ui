@@ -83,12 +83,31 @@ Rendered inside the fieldset as `<p class="label text-base-content/60">`
 $this->Form->control('title', ['size' => 'lg']);
 $this->Form->control('status', ['options' => [...], 'size' => 'sm']);
 $this->Form->control('body', ['size' => 'xl']);
+$this->Form->control('published', ['size' => 'lg']);                       // checkbox
+$this->Form->control('role', ['type' => 'radio', 'options' => [...], 'size' => 'sm']);
+$this->Form->control('active', ['switch' => true, 'size' => 'lg']);
+$this->Form->control('avatar', ['type' => 'file', 'size' => 'lg']);
 ```
 
-Injects the daisyUI size modifier (`input-lg`, `select-sm`, `textarea-xl`)
-via the `form.input.{size}` / `form.select.{size}` / `form.textarea.{size}`
-class map keys. Unmapped sizes (e.g. KTUI has no size equivalents) are
-silently ignored.
+Injects the daisyUI size modifier (`input-lg`, `select-sm`, `textarea-xl`,
+`checkbox-lg`, `radio-sm`, `toggle-lg`, `file-input-lg`) via the
+`form.{type}.{size}` class map keys. Available sizes: `xs`, `sm`, `md`,
+`lg`, `xl`. Unmapped combinations (e.g. KTUI has no size equivalents
+for inputs) are silently ignored.
+
+### Color variants
+
+```php
+$this->Form->control('active', ['switch' => true, 'color' => 'primary']);
+$this->Form->control('avatar', ['type' => 'file', 'color' => 'primary']);
+$this->Form->control('logo', ['type' => 'file', 'color' => 'ghost']);
+```
+
+Currently supported on switches and file inputs. Resolves to
+`form.switch.{color}` / `form.file.{color}` class map keys. Available
+names: `primary`, `secondary`, `neutral`, `accent`, `success`, `danger`
+(maps to `error`), `warning`, `info`. File inputs additionally support
+`ghost`.
 
 ### Validation errors
 
