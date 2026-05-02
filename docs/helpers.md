@@ -300,7 +300,19 @@ $this->Flash->info('Updates available.');
 
 Each message is rendered with the alert base class plus the type variant
 (e.g. `alert alert-success`), an inline SVG icon, and a dismiss button
-that removes the element on click.
+carrying `data-tailwind-ui-dismiss="[role=alert]"`. To wire the click-to-
+dismiss behavior under a strict Content-Security-Policy (no `'unsafe-inline'`
+in `script-src`), include the bundled handler:
+
+```php
+$this->Html->script('TailwindUi.dismiss', ['block' => true]);
+```
+
+The script (in the plugin's `webroot/js/dismiss.js`) attaches a single
+delegated `click` listener that removes the closest ancestor matching the
+selector in the `data-tailwind-ui-dismiss` attribute. Run
+`bin/cake plugin assets symlink` (or `copy`) once so CakePHP serves the
+asset from `/tailwind_ui/js/dismiss.js`.
 
 ## BreadcrumbsHelper
 
