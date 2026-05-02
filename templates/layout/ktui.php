@@ -17,7 +17,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $this->fetch('title') ?></title>
+    <title><?= h($this->fetch('title')) ?></title>
     <?= $this->fetch('css') ?>
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('script') ?>

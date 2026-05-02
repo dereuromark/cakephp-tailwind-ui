@@ -117,4 +117,21 @@ class FlashHelperTest extends TestCase
         $this->assertStringNotContainsString('<script>', $result);
         $this->assertStringContainsString('&lt;script&gt;', $result);
     }
+
+    public function testRenderDismissButtonIsCspFriendly(): void
+    {
+        $this->Session->write('Flash.flash', [
+            [
+                'message' => 'Item saved.',
+                'key' => 'flash',
+                'element' => 'TailwindUi.flash/default',
+                'params' => ['type' => 'success'],
+            ],
+        ]);
+
+        $result = $this->Flash->render();
+        $this->assertNotNull($result);
+        $this->assertStringNotContainsString('onclick', $result);
+        $this->assertStringContainsString('data-tailwind-ui-dismiss="[role=alert]"', $result);
+    }
 }
