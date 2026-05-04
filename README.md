@@ -8,6 +8,8 @@
 [![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-tailwind-ui/d/total.svg)](https://packagist.org/packages/dereuromark/cakephp-tailwind-ui)
 [![Coding Standards](https://img.shields.io/badge/cs-PhpCollective-purple.svg?style=flat-square)](https://github.com/php-collective/code-sniffer)
 
+This branch is for **CakePHP 5.2+**. See [version map](https://github.com/dereuromark/cakephp-tailwind-ui/wiki#cakephp-version-map) for details.
+
 Tailwind CSS / DaisyUI view helpers for CakePHP 5.2+.\
 Drop-in replacement for Bootstrap-styled helpers — outputs Tailwind/DaisyUI markup instead.
 
