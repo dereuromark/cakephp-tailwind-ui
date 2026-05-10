@@ -118,6 +118,31 @@ class FlashHelperTest extends TestCase
         $this->assertStringContainsString('&lt;script&gt;', $result);
     }
 
+    /**
+     * Explicit params.escape = false survives through render() into the element's
+     * $params, so callers that want to embed safe HTML can opt out of escaping
+     * cleanly. Regression for the audit claim that this option was being ignored.
+     *
+     * @return void
+     */
+    public function testRenderPreservesParamsEscapeFalse(): void
+    {
+        $this->Session->write('Flash.flash', [
+            [
+                'message' => '<strong>Saved!</strong>',
+                'key' => 'flash',
+                'element' => 'TailwindUi.flash/default',
+                'params' => ['type' => 'success', 'escape' => false],
+            ],
+        ]);
+
+        $result = $this->Flash->render();
+        $this->assertNotNull($result);
+        // Raw `<strong>` survives — proves escape=>false propagated to the element.
+        $this->assertStringContainsString('<strong>Saved!</strong>', $result);
+        $this->assertStringNotContainsString('&lt;strong&gt;', $result);
+    }
+
     public function testRenderDismissButtonIsCspFriendly(): void
     {
         $this->Session->write('Flash.flash', [

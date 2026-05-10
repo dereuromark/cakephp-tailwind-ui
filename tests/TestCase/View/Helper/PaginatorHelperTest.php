@@ -134,4 +134,25 @@ class PaginatorHelperTest extends TestCase
         $this->assertStringNotContainsString('»', $result);
         $this->assertStringContainsString('>2<', $result);
     }
+
+    /**
+     * links() previously mutated the helper's persistent template state, so subsequent
+     * direct prev() / next() calls in the same request emitted the pagination-block
+     * templates instead of their defaults. The fix wraps the override in
+     * templater()->push()/pop() so the mutation is scoped to the links() call.
+     *
+     * @return void
+     */
+    public function testLinksDoesNotLeakTemplatesIntoSubsequentCalls(): void
+    {
+        // Snapshot the default `nextActive` template before our links() call.
+        $templater = $this->Paginator->templater();
+        $defaultNextActive = $templater->get('nextActive');
+
+        $this->Paginator->links();
+
+        // After links() returns, the persistent templates must be exactly what they
+        // were before — the pagination-block override should have been popped off.
+        $this->assertSame($defaultNextActive, $templater->get('nextActive'));
+    }
 }

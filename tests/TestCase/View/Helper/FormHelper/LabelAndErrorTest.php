@@ -52,6 +52,28 @@ class LabelAndErrorTest extends FormHelperTestCase
         $this->assertStringContainsString('fieldset-legend', $result);
     }
 
+    /**
+     * Fieldset legends must not carry a `for` attribute. The previous implementation
+     * post-stripped the attribute with a fragile regex against the rendered string;
+     * the fix passes `for => false` to core's label() before render so the attribute
+     * is never emitted in the first place.
+     *
+     * @return void
+     */
+    public function testFieldsetLegendLabelHasNoForAttribute(): void
+    {
+        $this->Form->create($this->article);
+        $result = $this->Form->control('title');
+
+        // The legend rendering must produce a `fieldset-legend` element with no
+        // `for=` attribute — legends are not labels, and the previous post-render
+        // regex strip was fragile. Now `for => false` is passed to core's label()
+        // before render so the attribute is never emitted.
+        $this->assertStringContainsString('fieldset-legend', $result);
+        $this->assertStringContainsString('<legend class="fieldset-legend">', $result);
+        $this->assertStringNotContainsString('for="title"', $result);
+    }
+
     public function testTextFieldErrorAddsValidatorClass(): void
     {
         $this->Form->create([
