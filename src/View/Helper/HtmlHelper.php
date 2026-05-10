@@ -133,4 +133,117 @@ class HtmlHelper extends CoreHtmlHelper
 
         return $this->tag($tag, $content, $options);
     }
+
+    /**
+     * Render a DaisyUI-style tooltip wrapper around a label.
+     *
+     * Outputs `<span class="tooltip" data-tip="..."><label content/></span>`. The
+     * data-tip is rendered escaped by default; pass `escape => false` if you
+     * intentionally need raw HTML in the tip (rare). The trigger content is
+     * inserted verbatim — pass an already-escaped string or call `h()` yourself.
+     *
+     * @param string $content Trigger markup (already escaped).
+     * @param string $tip Tooltip text.
+     * @param array<string, mixed> $options HTML attributes for the wrapper plus
+     *  optional `position` (top|bottom|left|right) and `escape` (default true).
+     *
+     * @return string
+     */
+    public function tooltip(string $content, string $tip, array $options = []): string
+    {
+        $escape = $options['escape'] ?? true;
+        $position = $options['position'] ?? null;
+        unset($options['escape'], $options['position']);
+
+        $base = $this->classMap('tooltip') ?: 'tooltip';
+        $positionClass = $position !== null ? ($this->classMap('tooltip.' . $position) ?: 'tooltip-' . $position) : null;
+        $classes = array_filter([$base, $positionClass]);
+        $options = $this->injectClasses(implode(' ', $classes), $options);
+
+        $options['data-tip'] = $escape ? h($tip) : $tip;
+
+        return $this->tag('span', $content, $options + ['escape' => false]);
+    }
+
+    /**
+     * Render a `<dialog>`-based modal pair: a trigger button plus the modal markup.
+     *
+     * DaisyUI modals are native HTML5 `<dialog>` elements opened by the trigger
+     * button via a small inline `onclick` — except we keep CSP-friendly markup
+     * by using a `popovertarget`-style `data-modal-target` attribute pair that
+     * the bundled JS hook can wire up. Callers that prefer a different opening
+     * mechanism can disable the trigger via `trigger => false` and open the
+     * dialog themselves.
+     *
+     * @param string $triggerText Visible text on the trigger button.
+     * @param string $bodyHtml Pre-rendered HTML for the modal body.
+     * @param array<string, mixed> $options
+     *  - `id` (string): id for the dialog (auto-generated if missing).
+     *  - `title` (string|null): optional title rendered above $bodyHtml.
+     *  - `triggerClass` (string|null): class override for the trigger button.
+     *  - `dialogClass` (string|null): class override for the dialog.
+     *  - `trigger` (bool): emit the trigger button (default true).
+     *
+     * @return string
+     */
+    public function modal(string $triggerText, string $bodyHtml, array $options = []): string
+    {
+        $id = $options['id'] ?? 'modal-' . substr(bin2hex(random_bytes(4)), 0, 8);
+        $title = $options['title'] ?? null;
+        $triggerClass = $options['triggerClass'] ?? ($this->classMap('modal.trigger') ?: 'btn');
+        $dialogClass = $options['dialogClass'] ?? ($this->classMap('modal') ?: 'modal');
+        $boxClass = $this->classMap('modal.box') ?: 'modal-box';
+        $emitTrigger = $options['trigger'] ?? true;
+
+        $trigger = '';
+        if ($emitTrigger) {
+            $trigger = $this->tag(
+                'button',
+                h($triggerText),
+                [
+                    'type' => 'button',
+                    'class' => $triggerClass,
+                    'data-tailwind-ui-modal-open' => $id,
+                    'escape' => false,
+                ],
+            );
+        }
+
+        $heading = $title !== null ? '<h3 class="font-bold text-lg">' . h($title) . '</h3>' : '';
+        $closeBtn = '<form method="dialog"><button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" aria-label="Close">✕</button></form>';
+
+        $dialog = '<dialog id="' . h($id) . '" class="' . h($dialogClass) . '">'
+            . '<div class="' . h($boxClass) . '">' . $closeBtn . $heading . $bodyHtml . '</div>'
+            . '</dialog>';
+
+        return $trigger . $dialog;
+    }
+
+    /**
+     * Render a popover pair using the HTML5 popover API: a trigger plus the popover.
+     *
+     * Falls back gracefully on browsers without the popover API (the trigger and
+     * popover content are both visible in the DOM; the popover just doesn't auto-open
+     * without explicit JS).
+     *
+     * @param string $triggerText Visible text on the trigger button.
+     * @param string $bodyHtml Pre-rendered HTML for the popover body.
+     * @param array<string, mixed> $options
+     *  - `id` (string): id for the popover (auto-generated if missing).
+     *  - `triggerClass` (string|null): class override for the trigger button.
+     *  - `popoverClass` (string|null): class override for the popover element.
+     *
+     * @return string
+     */
+    public function popover(string $triggerText, string $bodyHtml, array $options = []): string
+    {
+        $id = $options['id'] ?? 'popover-' . substr(bin2hex(random_bytes(4)), 0, 8);
+        $triggerClass = $options['triggerClass'] ?? ($this->classMap('popover.trigger') ?: 'btn');
+        $popoverClass = $options['popoverClass'] ?? ($this->classMap('popover') ?: 'popover card bg-base-100 shadow p-4');
+
+        $trigger = '<button type="button" popovertarget="' . h($id) . '" class="' . h($triggerClass) . '">' . h($triggerText) . '</button>';
+        $body = '<div id="' . h($id) . '" popover class="' . h($popoverClass) . '">' . $bodyHtml . '</div>';
+
+        return $trigger . $body;
+    }
 }
