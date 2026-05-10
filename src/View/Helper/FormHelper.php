@@ -151,16 +151,15 @@ class FormHelper extends CoreFormHelper
     {
         $legendClass = $this->classMap('form.fieldsetLegend');
         $usesLegend = $legendClass !== '' && str_contains((string)($options['class'] ?? ''), $legendClass);
-        if ($legendClass !== '' && str_contains((string)($options['class'] ?? ''), $legendClass)) {
-            unset($options['for']);
-        }
 
-        $result = parent::label($fieldName, $text, $options);
         if ($usesLegend) {
-            $result = preg_replace('/\sfor="[^"]*"/', '', $result) ?? $result;
+            // The core label() helper always emits `for="..."`; passing it as an option
+            // is the only opt-out path that prevents the attribute from being added in
+            // the first place, so the post-regex on the rendered string can be dropped.
+            $options['for'] = false;
         }
 
-        return $result;
+        return parent::label($fieldName, $text, $options);
     }
 
     /**

@@ -36,34 +36,45 @@ class PaginatorHelper extends CorePaginatorHelper
         $activeClass = $this->classMap('pagination.active');
         $disabledClass = $this->classMap('pagination.disabled');
 
-        $this->setTemplates([
-            'nextActive' => '<a class="' . $itemClass . '" rel="next"{{attrs}}>{{text}}</a>',
-            'nextDisabled' => '<span class="' . $itemClass . ' ' . $disabledClass . '" aria-disabled="true">{{text}}</span>',
-            'prevActive' => '<a class="' . $itemClass . '" rel="prev"{{attrs}}>{{text}}</a>',
-            'prevDisabled' => '<span class="' . $itemClass . ' ' . $disabledClass . '" aria-disabled="true">{{text}}</span>',
-            'current' => '<span class="' . $itemClass . ' ' . $activeClass . '" aria-current="page">{{text}}</span>',
-            'number' => '<a class="' . $itemClass . '"{{attrs}}>{{text}}</a>',
-            'first' => '<a class="' . $itemClass . '"{{attrs}}>{{text}}</a>',
-            'last' => '<a class="' . $itemClass . '"{{attrs}}>{{text}}</a>',
-            'ellipsis' => '<span class="' . $itemClass . ' ' . $disabledClass . '">…</span>',
-        ]);
+        // setTemplates() mutates the helper's persistent template state, so once
+        // links() ran for the first time, any subsequent direct prev() / next() /
+        // numbers() calls in the same request would inherit our pagination-block
+        // templates instead of their own. Use the templater's push/pop API to
+        // scope the overrides to this call only.
+        $templater = $this->templater();
+        $templater->push();
+        try {
+            $this->setTemplates([
+                'nextActive' => '<a class="' . $itemClass . '" rel="next"{{attrs}}>{{text}}</a>',
+                'nextDisabled' => '<span class="' . $itemClass . ' ' . $disabledClass . '" aria-disabled="true">{{text}}</span>',
+                'prevActive' => '<a class="' . $itemClass . '" rel="prev"{{attrs}}>{{text}}</a>',
+                'prevDisabled' => '<span class="' . $itemClass . ' ' . $disabledClass . '" aria-disabled="true">{{text}}</span>',
+                'current' => '<span class="' . $itemClass . ' ' . $activeClass . '" aria-current="page">{{text}}</span>',
+                'number' => '<a class="' . $itemClass . '"{{attrs}}>{{text}}</a>',
+                'first' => '<a class="' . $itemClass . '"{{attrs}}>{{text}}</a>',
+                'last' => '<a class="' . $itemClass . '"{{attrs}}>{{text}}</a>',
+                'ellipsis' => '<span class="' . $itemClass . ' ' . $disabledClass . '">…</span>',
+            ]);
 
-        $firstOption = $options['first'] ?? true;
-        $prevOption = $options['prev'] ?? true;
-        $numbersOption = $options['numbers'] ?? true;
-        $nextOption = $options['next'] ?? true;
-        $lastOption = $options['last'] ?? true;
-        unset($options['first'], $options['prev'], $options['numbers'], $options['next'], $options['last']);
+            $firstOption = $options['first'] ?? true;
+            $prevOption = $options['prev'] ?? true;
+            $numbersOption = $options['numbers'] ?? true;
+            $nextOption = $options['next'] ?? true;
+            $lastOption = $options['last'] ?? true;
+            unset($options['first'], $options['prev'], $options['numbers'], $options['next'], $options['last']);
 
-        $first = $this->_renderNavLink('first', $firstOption, '«', $options);
-        $prev = $this->_renderNavLink('prev', $prevOption, '‹', $options);
-        $numbers = $numbersOption === false ? '' : $this->numbers($options);
-        $next = $this->_renderNavLink('next', $nextOption, '›', $options);
-        $last = $this->_renderNavLink('last', $lastOption, '»', $options);
+            $first = $this->_renderNavLink('first', $firstOption, '«', $options);
+            $prev = $this->_renderNavLink('prev', $prevOption, '‹', $options);
+            $numbers = $numbersOption === false ? '' : $this->numbers($options);
+            $next = $this->_renderNavLink('next', $nextOption, '›', $options);
+            $last = $this->_renderNavLink('last', $lastOption, '»', $options);
 
-        return '<div class="' . $paginationClass . '">'
-            . $first . $prev . $numbers . $next . $last
-            . '</div>';
+            return '<div class="' . $paginationClass . '">'
+                . $first . $prev . $numbers . $next . $last
+                . '</div>';
+        } finally {
+            $templater->pop();
+        }
     }
 
     /**
