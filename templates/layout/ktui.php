@@ -11,9 +11,14 @@
  *
  * @var \Cake\View\View $this
  */
+$theme = (string)(\Cake\Core\Configure::read('TailwindUi.theme') ?: 'light');
+// KTUI/Metronic uses a `dark` class on <html> for dark mode (Tailwind's class strategy),
+// distinct from DaisyUI's data-theme attribute. Both layouts read the same TailwindUi.theme
+// config so apps can flip preset without re-wiring their dark-mode toggle.
+$darkClass = $theme === 'dark' ? ' dark' : '';
 ?>
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="en" class="h-full<?= $darkClass ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

@@ -249,4 +249,76 @@ class HtmlHelperTest extends TestCase
         $this->assertStringContainsString('ki-filled', $result);
         $this->assertStringContainsString('check', $result);
     }
+
+    public function testTooltipWrapsContent(): void
+    {
+        $result = $this->Html->tooltip('hover me', 'helpful hint');
+
+        $this->assertStringContainsString('<span class="tooltip"', $result);
+        $this->assertStringContainsString('data-tip="helpful hint"', $result);
+        $this->assertStringContainsString('hover me</span>', $result);
+    }
+
+    public function testTooltipEscapesTipByDefault(): void
+    {
+        $result = $this->Html->tooltip('Hi', '<script>alert(1)</script>');
+
+        $this->assertStringNotContainsString('<script>', $result);
+        $this->assertStringContainsString('&lt;script&gt;', $result);
+    }
+
+    public function testTooltipPosition(): void
+    {
+        $result = $this->Html->tooltip('x', 'top tip', ['position' => 'top']);
+        $this->assertStringContainsString('tooltip-top', $result);
+    }
+
+    public function testModalEmitsTriggerAndDialog(): void
+    {
+        $result = $this->Html->modal('Open', '<p>body</p>', ['id' => 'm1', 'title' => 'Hello']);
+
+        $this->assertStringContainsString('data-tailwind-ui-modal-open="m1"', $result);
+        $this->assertStringContainsString('<dialog id="m1"', $result);
+        $this->assertStringContainsString('Hello</h3>', $result);
+        $this->assertStringContainsString('<p>body</p>', $result);
+        // Native dialog dismiss form.
+        $this->assertStringContainsString('<form method="dialog">', $result);
+    }
+
+    public function testModalGeneratesIdWhenMissing(): void
+    {
+        $result = $this->Html->modal('Open', '<p>x</p>');
+
+        $this->assertMatchesRegularExpression('/id="modal-[0-9a-f]+"/', $result);
+        // Trigger and dialog must share the same id.
+        preg_match('/data-tailwind-ui-modal-open="([^"]+)"/', $result, $m);
+        $this->assertNotEmpty($m[1] ?? null);
+        $this->assertStringContainsString('id="' . $m[1] . '"', $result);
+    }
+
+    public function testModalCanSuppressTrigger(): void
+    {
+        $result = $this->Html->modal('unused', '<p>x</p>', ['id' => 'm2', 'trigger' => false]);
+
+        $this->assertStringNotContainsString('data-tailwind-ui-modal-open', $result);
+        $this->assertStringStartsWith('<dialog', $result);
+    }
+
+    public function testPopoverEmitsTriggerAndBody(): void
+    {
+        $result = $this->Html->popover('Show', '<p>pop</p>', ['id' => 'p1']);
+
+        $this->assertStringContainsString('popovertarget="p1"', $result);
+        $this->assertStringContainsString('id="p1" popover', $result);
+        $this->assertStringContainsString('<p>pop</p>', $result);
+    }
+
+    public function testPopoverGeneratesIdWhenMissing(): void
+    {
+        $result = $this->Html->popover('Show', '<p>x</p>');
+
+        preg_match('/popovertarget="([^"]+)"/', $result, $m);
+        $this->assertNotEmpty($m[1] ?? null);
+        $this->assertStringContainsString('id="' . $m[1] . '" popover', $result);
+    }
 }
