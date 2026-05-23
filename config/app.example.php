@@ -2,11 +2,7 @@
 /**
  * TailwindUi plugin configuration example.
  *
- * Copy this file to your app's `config/` directory as `app_tailwind_ui.php`
- * and load it in your `config/bootstrap.php`:
- *
- *     Configure::load('app_tailwind_ui', 'default');
- *
+ * To modify these parameters, copy this file into your own CakePHP config directory or copy the array into your existing file.
  * Every key is optional. The defaults are shown commented out.
  */
 declare(strict_types=1);
