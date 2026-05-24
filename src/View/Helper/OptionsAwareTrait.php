@@ -115,8 +115,9 @@ trait OptionsAwareTrait
         $prefixDot = $prefix . '.';
         $variants = [];
         foreach (array_keys($this->_classMap) as $key) {
-            if (str_starts_with((string)$key, $prefixDot)) {
-                $variants[] = substr((string)$key, strlen($prefixDot));
+            $keyStr = (string)$key;
+            if (str_starts_with($keyStr, $prefixDot)) {
+                $variants[] = substr($keyStr, strlen($prefixDot));
             }
         }
 
