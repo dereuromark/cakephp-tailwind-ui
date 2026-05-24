@@ -91,11 +91,7 @@ class FormHelper extends CoreFormHelper
      */
     public function __construct(View $view, array $config = [])
     {
-        if (!isset($config['widgets'])) {
-            $config['widgets'] = $this->_widgets;
-        } else {
-            $config['widgets'] = $this->_widgets + $config['widgets'];
-        }
+        $config['widgets'] = isset($config['widgets']) ? $this->_widgets + $config['widgets'] : $this->_widgets;
 
         parent::__construct($view, $config);
 
