@@ -7,7 +7,7 @@ use Cake\Core\Plugin;
 use TailwindUi\TailwindUiPlugin;
 
 if (is_file('vendor/autoload.php')) {
-    require_once __DIR__ . '/vendor/autoload.php';
+    require_once 'vendor/autoload.php';
 } else {
     require_once dirname(__DIR__) . '/vendor/autoload.php';
 }
