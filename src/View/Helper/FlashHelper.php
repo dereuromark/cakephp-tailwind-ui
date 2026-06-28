@@ -11,7 +11,7 @@ class FlashHelper extends Helper
     use ClassMapTrait;
 
     /**
-     * @var array<string, mixed>
+     * @var array<int|string, array<string, mixed>|string>
      */
     public array $helpers = ['Html' => ['className' => 'TailwindUi.Html']];
 
