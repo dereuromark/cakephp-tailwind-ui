@@ -6,3 +6,7 @@ composer.phar
 /.phpunit.result.cache
 /.phpunit.cache/
 .phpcs.cache
+
+/docs/node_modules/
+/docs/.vitepress/cache/
+/docs/.vitepress/dist/

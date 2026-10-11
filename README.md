@@ -8,12 +8,9 @@
 [![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-tailwind-ui/d/total.svg)](https://packagist.org/packages/dereuromark/cakephp-tailwind-ui)
 [![Coding Standards](https://img.shields.io/badge/cs-PhpCollective-purple.svg?style=flat-square)](https://github.com/php-collective/code-sniffer)
 
-This branch is for **CakePHP 5.2+**. See [version map](https://github.com/dereuromark/cakephp-tailwind-ui/wiki#cakephp-version-map) for details.
+Tailwind CSS and DaisyUI view helpers for CakePHP forms, pagination, flash messages, and navigation.
 
-Tailwind CSS / DaisyUI view helpers for CakePHP 5.2+.\
-Drop-in replacement for Bootstrap-styled helpers — outputs Tailwind/DaisyUI markup instead.
-
-This plugin is the Tailwind equivalent of [bootstrap-ui](https://github.com/FriendsOfCake/bootstrap-ui).
+Read the [documentation website](https://dereuromark.github.io/cakephp-tailwind-ui/), starting with [Installation](https://dereuromark.github.io/cakephp-tailwind-ui/installation) and [Getting started](https://dereuromark.github.io/cakephp-tailwind-ui/guide/getting-started).
 
 ## Preview
 
@@ -24,56 +21,7 @@ This plugin is the Tailwind equivalent of [bootstrap-ui](https://github.com/Frie
 | ![Form controls](docs/screenshots/daisyui-forms.png) | ![Articles index](docs/screenshots/daisyui-articles-index.png) |
 | ![Buttons](docs/screenshots/daisyui-buttons.png) | ![Alerts](docs/screenshots/daisyui-alerts.png) |
 
-See [docs/](docs/README.md) for the full set of screenshots and documentation.
-
-## Installation
-
-```bash
-composer require dereuromark/cakephp-tailwind-ui
-```
-
-Load the plugin:
-```bash
-bin/cake plugin load TailwindUi
-```
-
-## Quick Start
-
-In your `AppView::initialize()`:
-
-```php
-use TailwindUi\View\UiViewTrait;
-
-class AppView extends View
-{
-    use UiViewTrait;
-
-    public function initialize(): void
-    {
-        parent::initialize();
-        $this->initializeUi();
-    }
-}
-```
-
-All `$this->Form->control()`, `$this->Paginator->links()`, `$this->Flash->render()`, and `$this->Breadcrumbs->render()` calls now output DaisyUI-styled markup.
-
-## Class Map
-
-The plugin uses a configurable class map. DaisyUI is the default. To switch to KTUI (Metronic):
-
-```php
-// In config/bootstrap.php or Application::bootstrap()
-Configure::write('TailwindUi.classMap', 'ktui');
-```
-
-Partial overrides:
-
-```php
-Configure::write('TailwindUi.classMap', [
-    'form.input' => 'my-custom-input-class',
-]);
-```
+See the [screenshot gallery](https://dereuromark.github.io/cakephp-tailwind-ui/screenshots) for both presets.
 
 ## Helpers
 
@@ -96,9 +44,9 @@ Custom presets can be added by placing a PHP file in `config/class_maps/` that r
 
 ## Documentation
 
-- [Installation](docs/installation.md)
-- [Class Map](docs/class-map.md)
-- [Helpers](docs/helpers.md)
-- [Presets](docs/presets.md) — DaisyUI, KTUI, custom
-- [Bake Theme](docs/bake.md)
-- [Screenshots](docs/README.md#screenshots)
+- [Installation](https://dereuromark.github.io/cakephp-tailwind-ui/installation)
+- [Getting started](https://dereuromark.github.io/cakephp-tailwind-ui/guide/getting-started)
+- [Compile your CSS](https://dereuromark.github.io/cakephp-tailwind-ui/guide/css)
+- [Helpers](https://dereuromark.github.io/cakephp-tailwind-ui/helpers)
+- [Class maps and presets](https://dereuromark.github.io/cakephp-tailwind-ui/presets)
+- [Screenshots](https://dereuromark.github.io/cakephp-tailwind-ui/screenshots)

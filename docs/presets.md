@@ -3,8 +3,8 @@
 A preset is a PHP file in `config/class_maps/` that returns an array of
 class-map overrides. The plugin ships with two:
 
-- `daisyui` — default, no config needed
-- `ktui` — for Metronic v9 / KTUI users
+- `daisyui`: default, no config needed
+- `ktui`: for Metronic v9 / KTUI users
 
 You can also create your own.
 
@@ -14,9 +14,9 @@ You can also create your own.
 semantic component classes (`btn`, `input`, `alert`, `badge`, `card`,
 `breadcrumbs`, `join`, …). It maps cleanly onto the plugin's class map.
 
-**Activation:** nothing to do — it's the default.
+**Activation:** nothing to do: it's the default.
 
-**CSS setup:** see [installation.md](installation.md#daisyui-default-preset).
+**CSS setup:** see [installation.md](guide/css.md).
 
 **Caveats:**
 
@@ -28,62 +28,24 @@ semantic component classes (`btn`, `input`, `alert`, `badge`, `card`,
 
 ## KTUI (Metronic)
 
-[KTUI](https://keenthemes.com/metronic) is the proprietary Tailwind
-component library that ships with Metronic v9. Classes look like `kt-input`,
-`kt-btn`, `kt-card`, `kt-badge`, `kt-select`, etc.
+[KTUI](https://ktui.io/docs) is an open-source Tailwind component library distributed under the [MIT license](https://github.com/keenthemes/ktui). Metronic is a separate template product with its own licensing. The plugin's preset emits classes such as `kt-input`, `kt-btn`, `kt-card`, and `kt-badge`.
 
-**Activation:**
+Configure the preset before loading view helpers:
 
 ```php
-// config/bootstrap.php
 \Cake\Core\Configure::write('TailwindUi.classMap', 'ktui');
 ```
 
-**CSS setup:** KTUI is not available on a public CDN. You need a local
-copy of Metronic and to compile Tailwind v4 against your own template
-sources so all the utilities you use get emitted.
+Follow [KTUI's installation instructions](https://ktui.io/docs/installation) to install its package, theme variables, stylesheet, and JavaScript. The CakePHP plugin does not copy or initialize those assets. Scan the plugin's vendor directory when compiling Tailwind, as described in [Compile your CSS](guide/css.md).
 
-A minimal `src/css/styles.css` (Tailwind v4 syntax):
-
-```css
-@import 'tailwindcss';
-
-/* Point Tailwind at your CakePHP templates */
-@source '../../templates/**/*.php';
-@source '../../node_modules/@keenthemes/ktui/src/components/**/*.{ts,js,css}';
-
-/* KTUI's theme config + component classes */
-@import './config.ktui.css';
-@import '../../node_modules/@keenthemes/ktui/styles.css';
-```
-
-Compile with:
-
-```bash
-npx @tailwindcss/cli -i src/css/styles.css -o webroot/css/app.css --minify
-```
-
-Include in your layout:
-
-```html
-<link href="/css/app.css" rel="stylesheet" type="text/css" />
-<script src="/js/ktui.min.js" defer></script>
-```
-
-**Caveats:**
-
-- KTUI's JavaScript is required for interactive components (drawer,
-  dropdown, modal, etc.). Pure CSS components work without JS.
-- The Metronic license applies — you must own a Metronic license to
-  redistribute KTUI CSS/JS in a public project.
-- Because Tailwind v4 tree-shakes utilities based on the sources you
-  configure, make sure `@source` covers all your templates or the
-  classes emitted by this plugin.
+Use `TailwindUi.ktui` or a custom application layout that includes the compiled stylesheet and KTUI JavaScript. Interactive components need KTUI's JavaScript and the component-specific markup documented upstream; changing the preset alone does not add application interactions.
 
 ## Custom preset
 
+Do not edit files inside `vendor/`; dependency updates replace them. Named presets are loaded from the plugin directory. For an application-owned preset, pass the returned array as shown below.
+
 To add a preset for Flowbite, Preline UI, shadcn, or an internal design
-system, drop a PHP file into the plugin's `config/class_maps/` directory.
+system, keep a PHP class-map file in your application's `config/class_maps/` directory.
 Example for shadcn-style classes:
 
 ```php
@@ -108,7 +70,7 @@ only need to override what's different.
 Activate it:
 
 ```php
-Configure::write('TailwindUi.classMap', 'shadcn');
+\Cake\Core\Configure::write('TailwindUi.classMap', require CONFIG . 'class_maps/shadcn.php');
 ```
 
 ## Per-key overrides
@@ -124,5 +86,5 @@ Configure::write('TailwindUi.classMap', [
 
 These are merged on top of the DaisyUI defaults.
 
-You can also combine a preset with per-key overrides — see
-[class-map.md](class-map.md#preset--overrides).
+You can also combine a preset with per-key overrides: see
+[class-map.md](class-map.md#preset-overrides).

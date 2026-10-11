@@ -36,7 +36,8 @@ class CopyLayoutsCommand extends Command
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         $pluginPath = Plugin::path('TailwindUi');
-        $appTemplates = ROOT . DS . 'templates' . DS;
+        $appTemplates = $this->applicationTemplatesPath();
+        $failed = false;
 
         $filesToCopy = [
             $pluginPath . 'templates' . DS . 'layout' . DS . 'default.php' => $appTemplates . 'layout' . DS . 'default.php',
@@ -44,12 +45,6 @@ class CopyLayoutsCommand extends Command
         ];
 
         foreach ($filesToCopy as $source => $dest) {
-            $destDir = dirname($dest);
-            if (!is_dir($destDir)) {
-                mkdir($destDir, 0755, true);
-                $io->out('<info>Created directory:</info> ' . $destDir);
-            }
-
             if (file_exists($dest)) {
                 $io->warning('File already exists, skipping: ' . $dest);
 
@@ -58,17 +53,28 @@ class CopyLayoutsCommand extends Command
 
             if (!file_exists($source)) {
                 $io->error('Source file not found: ' . $source);
+                $failed = true;
 
                 continue;
             }
 
-            copy($source, $dest);
-            $io->out('<success>Copied:</success> ' . $dest);
+            if (!$io->createFile($dest, (string)file_get_contents($source))) {
+                $failed = true;
+            }
+        }
+
+        if ($failed) {
+            return static::CODE_ERROR;
         }
 
         $io->out('');
-        $io->out('<info>Done!</info> Layout files copied to your application templates directory.');
+        $io->out('<info>Done!</info> Layout files copied or existing files preserved.');
 
         return static::CODE_SUCCESS;
+    }
+
+    protected function applicationTemplatesPath(): string
+    {
+        return ROOT . DS . 'templates' . DS;
     }
 }

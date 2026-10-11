@@ -46,10 +46,13 @@ class InstallCommand extends Command
         $io->out('   $this->loadHelper(\'Paginator\', [\'className\' => \'TailwindUi.Paginator\']);');
         $io->out('   $this->loadHelper(\'Breadcrumbs\', [\'className\' => \'TailwindUi.Breadcrumbs\']);');
         $io->out('');
-        $io->out('3. (Optional) Copy layouts to your application:');
+        $io->out('3. Load a compiled Tailwind CSS / DaisyUI stylesheet in your layout.');
+        $io->out('   See https://dereuromark.github.io/cakephp-tailwind-ui/guide/css');
+        $io->out('');
+        $io->out('4. (Optional) Copy layouts to your application:');
         $io->out('   bin/cake tailwind_ui copy_layouts');
         $io->out('');
-        $io->out('4. (Optional) Switch to KTUI class map:');
+        $io->out('5. (Optional) Switch to KTUI class map:');
         $io->out('   Configure::write(\'TailwindUi.classMap\', \'ktui\');');
         $io->out('');
 

@@ -1,4 +1,6 @@
 <?php
+use function Cake\Core\h;
+
 /**
  * Default layout for the KTUI (Metronic) preset.
  *

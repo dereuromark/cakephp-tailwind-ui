@@ -3,7 +3,7 @@
 The plugin ships a `TailwindUi` bake theme that generates Tailwind/DaisyUI-styled
 CakePHP templates via the standard bake tool.
 
-## Installation
+## Optional dependency
 
 The bake theme requires `cakephp/bake` (a dev/build tool, not a runtime dependency):
 
@@ -41,10 +41,10 @@ Force overwrite existing templates:
 bin/cake bake template Articles --theme TailwindUi --force
 ```
 
-Bake templates for all models at once:
+Generate models, controllers, and templates for all database tables:
 
 ```bash
-bin/cake bake all --theme TailwindUi
+bin/cake bake all --everything --theme TailwindUi
 ```
 
 ## What is generated
@@ -59,6 +59,7 @@ For each model, bake produces four template files in `templates/{ModelName}/`:
 | `edit.php` | Same as add, with an additional Delete `postLink` in the action bar |
 
 All templates include:
+
 - Breadcrumbs via `$this->Breadcrumbs->add()` / `$this->Breadcrumbs->render()`
 - Page title via `$this->assign('title', ...)`
 - `$this->fetch('postLink')` for delete confirmation forms
@@ -78,6 +79,6 @@ cp vendor/dereuromark/cakephp-tailwind-ui/templates/bake/element/form.twig templ
 
 Then edit the copied `.twig` files to suit your layout, add extra fields, change
 class names, or adjust the structure. The bake variable reference is the same as
-any CakePHP bake theme — see the
-[bake documentation](https://book.cakephp.org/bake/3/en/development.html) for
+any CakePHP bake theme: see the
+[bake documentation](https://book.cakephp.org/bake/3/development.html) for
 the full list of available variables (`$fields`, `$associations`, `$primaryKey`, etc.).

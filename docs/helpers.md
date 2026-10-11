@@ -2,7 +2,7 @@
 
 Every helper extends its CakePHP core counterpart and reads classes from
 the [class map](class-map.md). Your existing `$this->Form->control()` calls
-work unchanged — they just emit Tailwind/DaisyUI markup instead of Bootstrap.
+keep their CakePHP APIs while emitting Tailwind/DaisyUI markup.
 
 ## FormHelper
 
@@ -27,7 +27,7 @@ Single checkboxes keep their inline-flex label wrapper (no fieldset).
 Submit buttons and hidden fields are never wrapped.
 
 Presets control the container markup via a `templates` block in the
-preset file — see [the class map guide](class-map.md) for details.
+preset file: see [the class map guide](class-map.md) for details.
 The KTUI preset ships a `<div class="mb-4">` wrapper instead, because
 KTUI has no `fieldset-legend` equivalent.
 
@@ -48,7 +48,7 @@ Inline layout wraps all controls in a single
 `<div class="flex flex-wrap items-end gap-3 mb-4">` (from
 `form.inlineWrapper`), hides each label as `sr-only` (still readable
 by screen readers), and suppresses help text. Intended for search
-bars and filter rows. Widths are user-controlled — pass
+bars and filter rows. Widths are user-controlled: pass
 `['class' => 'w-48']` or similar on each control to size them.
 
 ### Every CakePHP input type
@@ -57,10 +57,10 @@ bars and filter rows. Widths are user-controlled — pass
 $this->Form->control('title');
 $this->Form->control('email', ['type' => 'email']);
 $this->Form->control('body', ['type' => 'textarea']);
-$this->Form->control('status', ['type' => 'select', 'options' => [...]]);
+$this->Form->control('status', ['type' => 'select', 'options' => ['draft' => 'Draft', 'published' => 'Published']]);
 $this->Form->control('active', ['type' => 'checkbox']);
 $this->Form->control('tags._ids', ['type' => 'select', 'multiple' => 'checkbox', 'options' => $tags]);
-$this->Form->control('role', ['type' => 'radio', 'options' => [...]]);
+$this->Form->control('role', ['type' => 'radio', 'options' => ['reader' => 'Reader', 'editor' => 'Editor']]);
 $this->Form->control('file', ['type' => 'file']);
 $this->Form->control('published_date', ['type' => 'date']);
 ```
@@ -89,10 +89,10 @@ Rendered inside the fieldset as `<p class="label text-base-content/60">`
 
 ```php
 $this->Form->control('title', ['size' => 'lg']);
-$this->Form->control('status', ['options' => [...], 'size' => 'sm']);
+$this->Form->control('status', ['options' => ['draft' => 'Draft', 'published' => 'Published'], 'size' => 'sm']);
 $this->Form->control('body', ['size' => 'xl']);
 $this->Form->control('published', ['size' => 'lg']);                       // checkbox
-$this->Form->control('role', ['type' => 'radio', 'options' => [...], 'size' => 'sm']);
+$this->Form->control('role', ['type' => 'radio', 'options' => ['reader' => 'Reader', 'editor' => 'Editor'], 'size' => 'sm']);
 $this->Form->control('active', ['switch' => true, 'size' => 'lg']);
 $this->Form->control('avatar', ['type' => 'file', 'size' => 'lg']);
 ```
@@ -147,15 +147,15 @@ Renders a daisyUI `rating` component as a horizontal row of radio
 inputs styled as star masks. Wrapped in the standard fieldset/horizontal
 container so it composes with the rest of the form. Options:
 
-- `max` — number of stars (default `5`).
-- `value` — currently selected rating (`null`/`0` for no rating).
-- `size` — `xs`/`sm`/`md`/`lg`/`xl`.
-- `allowEmpty` — whether to render a hidden "no rating" radio at value `0` so users can clear the rating (default `true`).
-- `label`, `help` — same semantics as `control()`.
+- `max`: number of stars (default `5`).
+- `value`: currently selected rating (`null`/`0` for no rating).
+- `size`: `xs`/`sm`/`md`/`lg`/`xl`.
+- `allowEmpty`: whether to render a hidden "no rating" radio at value `0` so users can clear the rating (default `true`).
+- `label`, `help`: same semantics as `control()`.
 
 Class map keys: `form.rating`, `form.ratingItem`, `form.ratingHidden`,
 `form.rating.{size}`. KTUI renders a fallback flex row of plain
-checkboxes — KTUI has no rating component natively.
+checkboxes: KTUI has no rating component natively.
 
 Out-of-range values are clamped: `value` greater than `max` highlights
 the highest star, negative `value` snaps to the empty radio. Field
@@ -226,13 +226,13 @@ Color variants (`primary`, `secondary`, `neutral`, `accent`, `success`,
 `danger`, `warning`, `info`), style modifiers (`outline`, `soft`, `dash`,
 `ghost`, `link`), and sizes (`xs`, `sm`, `md`, `lg`, `xl`) are stripped
 from the class list and replaced with the equivalent class map values
-(e.g. `danger` → `btn-error`). Colors and modifiers combine freely —
+(e.g. `danger` → `btn-error`). Colors and modifiers combine freely:
 `['class' => 'soft primary']` emits `btn btn-soft btn-primary`.
 
 The set of recognized keywords is derived from the class map at runtime,
 so adding a custom key (e.g. `btn.brand => 'btn-brand'` via
 `TailwindUi.classMapOverrides`) makes `brand` recognized as a **modifier**
-without any helper changes — meaning `['class' => 'brand']` emits
+without any helper changes: meaning `['class' => 'brand']` emits
 `btn btn-brand btn-primary`, because the default primary color still
 applies to modifiers.
 
@@ -376,7 +376,7 @@ alias for daisyUI's `error`. Default variant is `info`. Always emits
 Color variants (`primary`, `secondary`, `neutral`, `accent`, `success`,
 `danger`, `warning`, `info`), style modifiers (`outline`, `soft`, `dash`,
 `ghost`), and sizes (`xs`, `sm`, `md`, `lg`, `xl`) are resolved from the
-class map. Colors and modifiers stack — `['class' => 'soft primary']`
+class map. Colors and modifiers stack: `['class' => 'soft primary']`
 produces a soft-primary badge.
 
 ### `icon()`
