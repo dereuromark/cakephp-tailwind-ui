@@ -25,14 +25,14 @@
 		"source": "https://github.com/dereuromark/cakephp-tailwind-ui"
 	},
 	"require": {
-		"php": ">=8.2",
-		"cakephp/cakephp": "^5.2"
+		"php": ">=8.5",
+		"cakephp/cakephp": "^6.0@dev"
 	},
 	"require-dev": {
 		"php-collective/code-sniffer": "dev-master as 0.4.6",
-		"phpunit/phpunit": "^11.5 || ^12.1 || ^13.0"
+		"phpunit/phpunit": "^13.0"
 	},
-	"minimum-stability": "stable",
+	"minimum-stability": "dev",
 	"prefer-stable": true,
 	"autoload": {
 		"psr-4": {

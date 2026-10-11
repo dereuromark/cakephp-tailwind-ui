@@ -164,7 +164,7 @@ class FormHelper extends CoreFormHelper
      * Core assigns a `for` attribute to non-grouped labels before our legend
      * template is applied. Strip it for fieldset/legend mode.
      */
-    protected function _inputLabel(string $fieldName, array|string|null $label = null, array $options = []): string
+    protected function inputLabel(string $fieldName, array|string|null $label = null, array $options = []): string
     {
         $options += ['id' => null, 'input' => null, 'nestedInput' => false, 'templateVars' => []];
         $labelAttributes = ['templateVars' => $options['templateVars']];
@@ -183,7 +183,7 @@ class FormHelper extends CoreFormHelper
         $usesLegend = $this->_align === static::ALIGN_DEFAULT
             && $this->classMap('form.fieldsetLegend') !== ''
             && ($options['type'] ?? null) !== 'checkbox';
-        if (in_array($options['type'], $this->_groupedInputTypes, true) || $usesLegend) {
+        if (in_array($options['type'], $this->groupedInputTypes, true) || $usesLegend) {
             $labelAttributes['for'] = false;
         }
         if ($options['nestedInput']) {
@@ -231,7 +231,7 @@ class FormHelper extends CoreFormHelper
             $options['floating'],
         );
 
-        $parsedOptions = $this->_parseOptions($fieldName, $options);
+        $parsedOptions = $this->parseOptions($fieldName, $options);
         $type = $parsedOptions['type'];
 
         $size = $options['size'] ?? null;
@@ -267,7 +267,7 @@ class FormHelper extends CoreFormHelper
                 $options['label']['for'] = false;
             }
             if ($isGroupInput && is_array($options['label']) && !array_key_exists('id', $options['label'])) {
-                $options['label']['id'] = $this->_domId($fieldName) . '-label';
+                $options['label']['id'] = $this->domId($fieldName) . '-label';
             }
 
             // Append tooltip icon to the label text if requested.
@@ -293,11 +293,11 @@ class FormHelper extends CoreFormHelper
             $options = $this->injectClasses($this->classMap('form.radio'), $options);
             $options['templateVars']['labelClass'] = $this->classMap('form.label');
             $options['templateVars']['wrapperClass'] = $this->classMap('form.checkboxLabelWrapper');
-            $options['templateVars']['groupId'] = $this->_domId($fieldName) . '-label';
+            $options['templateVars']['groupId'] = $this->domId($fieldName) . '-label';
         } elseif ($type === 'multicheckbox' || ($type === 'select' && ($options['multiple'] ?? null) === 'checkbox')) {
             $options = $this->injectClasses($this->classMap('form.checkbox'), $options);
             $options['templateVars']['labelClass'] = $this->classMap('form.label');
-            $options['templateVars']['groupId'] = $this->_domId($fieldName) . '-label';
+            $options['templateVars']['groupId'] = $this->domId($fieldName) . '-label';
         } elseif ($type === 'range') {
             $options = $this->injectClasses($this->classMap('form.range'), $options);
         }
@@ -345,7 +345,7 @@ class FormHelper extends CoreFormHelper
         $helpHtml = '';
         if ($help !== null && !$isInline) {
             $helperClass = $this->classMap('form.helpText');
-            $helpId = $this->_domId($fieldName) . '-help';
+            $helpId = $this->domId($fieldName) . '-help';
             $helpTpl = $controlTemplates['inputHelp'] ?? '<div class="{{helperClass}}">{{text}}</div>';
             $helpHtml = strtr($helpTpl, [
                 '{{helperClass}}' => $helperClass,
@@ -444,7 +444,7 @@ class FormHelper extends CoreFormHelper
         ];
 
         $max = max(1, (int)$options['max']);
-        $current = $options['value'] ?? $this->_getContext()->val($fieldName);
+        $current = $options['value'] ?? $this->getContext()->val($fieldName);
         $current = $current !== null ? (int)$current : null;
         // Clamp out-of-range values so the corresponding star still gets
         // checked. Negative values fall through to the empty radio.
@@ -467,7 +467,7 @@ class FormHelper extends CoreFormHelper
         }
 
         $name = $this->_buildDomName($fieldName);
-        $idBase = $this->_domId($fieldName);
+        $idBase = $this->domId($fieldName);
 
         $html = '<div class="' . $ratingClass . '">';
         if ($allowEmpty) {
@@ -554,7 +554,7 @@ class FormHelper extends CoreFormHelper
      */
     protected function _formatErrorText(string $fieldName): string
     {
-        $errors = $this->_getContext()->error($fieldName);
+        $errors = $this->getContext()->error($fieldName);
         if (!$errors) {
             return '';
         }
@@ -688,11 +688,11 @@ class FormHelper extends CoreFormHelper
     }
 
     /**
-     * Override _inputContainerTemplate to apply containerClass from templateVars.
+     * Override inputContainerTemplate to apply containerClass from templateVars.
      *
      * @param array<string, mixed> $options
      */
-    protected function _inputContainerTemplate(array $options): string
+    protected function inputContainerTemplate(array $options): string
     {
         $type = $options['options']['type'];
         // Remap `select + multiple => checkbox` onto the multicheckbox template
@@ -725,11 +725,11 @@ class FormHelper extends CoreFormHelper
     }
 
     /**
-     * Override _groupTemplate to pass labelClass.
+     * Override groupTemplate to pass labelClass.
      *
      * @param array<string, mixed> $options
      */
-    protected function _groupTemplate(array $options): string
+    protected function groupTemplate(array $options): string
     {
         $groupTemplate = $options['options']['type'] . 'FormGroup';
         if (!$this->templater()->get($groupTemplate)) {

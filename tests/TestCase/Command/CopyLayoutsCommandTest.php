@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace TailwindUi\Test\TestCase\Command;
 
-use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\TestSuite\TestCase;
@@ -24,7 +23,7 @@ class CopyLayoutsCommandTest extends TestCase
         $io = $this->getMockBuilder(ConsoleIo::class)
             ->onlyMethods(['createFile', 'out'])->getMock();
         $io->expects($this->exactly(3))->method('createFile')->willReturn(false);
-        $this->assertSame(CopyLayoutsCommand::CODE_ERROR, $command->execute(new Arguments([], [], []), $io));
+        $this->assertSame(CopyLayoutsCommand::CODE_ERROR, $command->run([], $io));
     }
 
     public function testCopyUsesPluginOverridePathsAndPreservesExistingFiles(): void
@@ -38,7 +37,7 @@ class CopyLayoutsCommandTest extends TestCase
         $output = new StubConsoleOutput();
         $io = new ConsoleIo($output, $output);
         try {
-            $this->assertSame(0, $command->execute(new Arguments([], [], []), $io));
+            $this->assertSame(0, $command->run([], $io));
             $this->assertSame('Existing override', file_get_contents($path . 'plugin/TailwindUi/layout/default.php'));
             $this->assertFileExists($path . 'plugin/TailwindUi/layout/ktui.php');
             $this->assertFileExists($path . 'plugin/TailwindUi/element/flash/default.php');
@@ -61,6 +60,6 @@ class CopyLayoutsCommandTest extends TestCase
         $io = $this->getMockBuilder(ConsoleIo::class)->onlyMethods(['createFile', 'error'])->getMock();
         $io->expects($this->never())->method('createFile');
         $io->expects($this->exactly(3))->method('error');
-        $this->assertSame(CopyLayoutsCommand::CODE_ERROR, $command->execute(new Arguments([], [], []), $io));
+        $this->assertSame(CopyLayoutsCommand::CODE_ERROR, $command->run([], $io));
     }
 }

@@ -1,9 +1,13 @@
 # CakePHP TailwindUi Plugin
 
-[![CI](https://github.com/dereuromark/cakephp-tailwind-ui/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/dereuromark/cakephp-tailwind-ui/actions/workflows/ci.yml?query=branch%3Amaster)
+This branch targets CakePHP 6 and PHP 8.5 or later. Use the `cake6` branches of companion CakePHP plugins during development.
+
+Composer applications consuming this development branch must set `minimum-stability` to `dev` and `prefer-stable` to `true`, then require this plugin as `dev-cake6`. Companion plugins also use their `cake6` branches. The published documentation website covers stable CakePHP 5 releases; use this branch's `docs/` directory for the upgrade documentation.
+
+[![CI](https://github.com/dereuromark/cakephp-tailwind-ui/actions/workflows/ci.yml/badge.svg?branch=cake6)](https://github.com/dereuromark/cakephp-tailwind-ui/actions/workflows/ci.yml?query=branch%3Acake6)
 [![Coverage Status](https://img.shields.io/codecov/c/github/dereuromark/cakephp-tailwind-ui/master.svg)](https://codecov.io/gh/dereuromark/cakephp-tailwind-ui)
 [![Latest Stable Version](https://poser.pugx.org/dereuromark/cakephp-tailwind-ui/v/stable.svg)](https://packagist.org/packages/dereuromark/cakephp-tailwind-ui)
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%208.2-8892BF.svg)](https://php.net/)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%208.5-8892BF.svg)](https://php.net/)
 [![License](https://poser.pugx.org/dereuromark/cakephp-tailwind-ui/license.svg)](LICENSE)
 [![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-tailwind-ui/d/total.svg)](https://packagist.org/packages/dereuromark/cakephp-tailwind-ui)
 [![Coding Standards](https://img.shields.io/badge/cs-PhpCollective-purple.svg?style=flat-square)](https://github.com/php-collective/code-sniffer)
