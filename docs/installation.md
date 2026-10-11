@@ -3,10 +3,12 @@
 Run this command from your CakePHP application's root directory:
 
 ```bash
-composer require dereuromark/cakephp-tailwind-ui
+composer config minimum-stability dev
+composer config prefer-stable true
+composer require dereuromark/cakephp-tailwind-ui:dev-cake6
 ```
 
-Composer checks the supported PHP and CakePHP versions. Load the plugin once:
+The `cake6` branch requires PHP 8.5 and CakePHP 6. The application must allow development stability for unreleased framework dependencies. Keep `prefer-stable` enabled for other packages. Load the plugin once:
 
 ```bash
 bin/cake plugin load TailwindUi

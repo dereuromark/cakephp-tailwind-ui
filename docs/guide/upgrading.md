@@ -1,6 +1,6 @@
 # Upgrading
 
-Composer is the authority for the supported PHP and CakePHP versions. The current plugin supports CakePHP 5; these docs do not declare CakePHP 6 compatibility.
+The `cake6` development branch requires CakePHP 6 and PHP 8.5. Follow the [installation guide](../installation.md) to select this branch and configure Composer stability. Custom helper overrides must use the CakePHP 6 property and method names. Breadcrumb templates use `content`; the legacy `title` input remains accepted.
 
 When changing CakePHP, Tailwind, or a preset, verify generated markup against your application's forms and layouts. The class maps are framework-specific, so replacing a CSS dependency without updating its preset can leave controls unstyled.
 

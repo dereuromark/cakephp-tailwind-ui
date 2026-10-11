@@ -13,9 +13,9 @@ class FileWidget extends CoreFileWidget
 
     /**
      * Note: `prepend`/`append` input-group decoration is **not supported** on
-     * file inputs. CakePHP's core FileWidget renders a styled native control
+     * file inputs. The widget renders a native file control
      * that doesn't compose with the daisyUI `join` wrapper. If those keys
-     * are passed they're silently dropped — use a regular text input with a
+     * are passed they're dropped. Use a regular text input with a
      * hidden file picker via JS if you need an addon next to a file control.
      */
     public function render(array $data, ContextInterface $context): string

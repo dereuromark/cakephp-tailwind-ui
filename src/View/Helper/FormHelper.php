@@ -688,7 +688,7 @@ class FormHelper extends CoreFormHelper
     }
 
     /**
-     * Override _inputContainerTemplate to apply containerClass from templateVars.
+     * Override inputContainerTemplate to apply containerClass from templateVars.
      *
      * @param array<string, mixed> $options
      */
@@ -725,7 +725,7 @@ class FormHelper extends CoreFormHelper
     }
 
     /**
-     * Override _groupTemplate to pass labelClass.
+     * Override groupTemplate to pass labelClass.
      *
      * @param array<string, mixed> $options
      */
