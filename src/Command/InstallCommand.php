@@ -39,17 +39,18 @@ class InstallCommand extends Command
         $io->out('1. Load the plugin in your Application::bootstrap():');
         $io->out('   $this->addPlugin(\'TailwindUi\');');
         $io->out('');
-        $io->out('2. Configure your AppView to load helpers:');
-        $io->out('   $this->loadHelper(\'Form\', [\'className\' => \'TailwindUi.Form\']);');
-        $io->out('   $this->loadHelper(\'Html\', [\'className\' => \'TailwindUi.Html\']);');
-        $io->out('   $this->loadHelper(\'Flash\', [\'className\' => \'TailwindUi.Flash\']);');
-        $io->out('   $this->loadHelper(\'Paginator\', [\'className\' => \'TailwindUi.Paginator\']);');
-        $io->out('   $this->loadHelper(\'Breadcrumbs\', [\'className\' => \'TailwindUi.Breadcrumbs\']);');
+        $io->out('2. Add UiViewTrait to AppView and call initializeUi() after parent::initialize():');
+        $io->out('   use \\TailwindUi\\View\\UiViewTrait;');
+        $io->out('   $this->initializeUi();');
+        $io->out('   See https://dereuromark.github.io/cakephp-tailwind-ui/guide/getting-started');
         $io->out('');
-        $io->out('3. (Optional) Copy layouts to your application:');
+        $io->out('3. Load a compiled Tailwind CSS / DaisyUI stylesheet in your layout.');
+        $io->out('   See https://dereuromark.github.io/cakephp-tailwind-ui/guide/css');
+        $io->out('');
+        $io->out('4. (Optional) Copy layouts to your application:');
         $io->out('   bin/cake tailwind_ui copy_layouts');
         $io->out('');
-        $io->out('4. (Optional) Switch to KTUI class map:');
+        $io->out('5. (Optional) Switch to KTUI class map:');
         $io->out('   Configure::write(\'TailwindUi.classMap\', \'ktui\');');
         $io->out('');
 

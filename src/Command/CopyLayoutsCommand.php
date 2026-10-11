@@ -35,40 +35,59 @@ class CopyLayoutsCommand extends Command
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
-        $pluginPath = Plugin::path('TailwindUi');
-        $appTemplates = ROOT . DS . 'templates' . DS;
+        $pluginTemplates = $this->sourceTemplatesPath();
+        $appTemplates = $this->applicationTemplatesPath() . 'plugin' . DS . 'TailwindUi' . DS;
+        $failed = false;
 
         $filesToCopy = [
-            $pluginPath . 'templates' . DS . 'layout' . DS . 'default.php' => $appTemplates . 'layout' . DS . 'default.php',
-            $pluginPath . 'templates' . DS . 'element' . DS . 'flash' . DS . 'default.php' => $appTemplates . 'element' . DS . 'flash' . DS . 'default.php',
+            $pluginTemplates . 'layout' . DS . 'default.php' => $appTemplates . 'layout' . DS . 'default.php',
+            $pluginTemplates . 'layout' . DS . 'ktui.php' => $appTemplates . 'layout' . DS . 'ktui.php',
+            $pluginTemplates . 'element' . DS . 'flash' . DS . 'default.php' => $appTemplates . 'element' . DS . 'flash' . DS . 'default.php',
         ];
 
         foreach ($filesToCopy as $source => $dest) {
-            $destDir = dirname($dest);
-            if (!is_dir($destDir)) {
-                mkdir($destDir, 0755, true);
-                $io->out('<info>Created directory:</info> ' . $destDir);
-            }
-
             if (file_exists($dest)) {
                 $io->warning('File already exists, skipping: ' . $dest);
 
                 continue;
             }
 
-            if (!file_exists($source)) {
-                $io->error('Source file not found: ' . $source);
+            if (!is_file($source) || !is_readable($source)) {
+                $io->error('Source file missing or unreadable: ' . $source);
+                $failed = true;
 
                 continue;
             }
 
-            copy($source, $dest);
-            $io->out('<success>Copied:</success> ' . $dest);
+            $contents = @file_get_contents($source);
+            if ($contents === false) {
+                $io->error('Could not read source file: ' . $source);
+                $failed = true;
+
+                continue;
+            }
+            if (!$io->createFile($dest, $contents)) {
+                $failed = true;
+            }
+        }
+
+        if ($failed) {
+            return static::CODE_ERROR;
         }
 
         $io->out('');
-        $io->out('<info>Done!</info> Layout files copied to your application templates directory.');
+        $io->out('<info>Done!</info> Layout files copied or existing files preserved.');
 
         return static::CODE_SUCCESS;
+    }
+
+    protected function applicationTemplatesPath(): string
+    {
+        return ROOT . DS . 'templates' . DS;
+    }
+
+    protected function sourceTemplatesPath(): string
+    {
+        return Plugin::path('TailwindUi') . 'templates' . DS;
     }
 }

@@ -97,10 +97,10 @@ The full list of keys is in `config/class_maps/daisyui.php`. Summary:
 
 Colors and modifiers stack freely: `['class' => 'soft primary']` emits
 `btn btn-soft btn-primary`. Sizes and modifiers don't suppress the
-default color — `['class' => 'ghost']` still gets `btn-primary` applied.
+default color: `['class' => 'ghost']` still gets `btn-primary` applied.
 
 Custom keys added via `TailwindUi.classMapOverrides` are recognized
-automatically — but as **modifiers**, so the default color still applies
+automatically: but as **modifiers**, so the default color still applies
 on top (`['class' => 'brand']` → `btn btn-brand btn-primary`). To make a
 custom key act as a standalone color, promote it via Configure:
 
@@ -195,7 +195,7 @@ Both shapes are auto-detected. Use the nested shape when your framework's
 form idiom requires different wrapper markup (e.g. daisyUI 5 uses
 `<fieldset>` and `<legend>`, KTUI uses plain `<div>` and `<label>`).
 
-Template overrides are **ignored in horizontal alignment mode** —
+Template overrides are **ignored in horizontal alignment mode**:
 horizontal layout always uses the plugin's built-in div-based templates
 because `<legend>` doesn't compose with a two-column flex layout.
 
@@ -215,10 +215,10 @@ Available placeholders inside container templates: `{{content}}`,
 
 ## Adding a custom preset
 
-Create `config/class_maps/mypreset.php` in the plugin directory (or in your
-app if you use a loader). Any keys you don't set fall back to the DaisyUI
-defaults. Activate it:
+Keep `config/class_maps/mypreset.php` in your application and have it return a class-map array. Keys you omit fall back to DaisyUI defaults. Activate the array before helpers load:
 
 ```php
-Configure::write('TailwindUi.classMap', 'mypreset');
+\Cake\Core\Configure::write('TailwindUi.classMap', require CONFIG . 'class_maps/mypreset.php');
 ```
+
+Named presets resolve only inside the plugin's `config/class_maps/` directory. An unknown name falls back to DaisyUI; it does not load application files. See [Custom presets](presets.md#custom-preset) for a complete example.

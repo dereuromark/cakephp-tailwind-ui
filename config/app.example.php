@@ -9,17 +9,20 @@ declare(strict_types=1);
 
 return [
     'TailwindUi' => [
+        // Theme emitted by bundled layouts. Compile named DaisyUI themes in your CSS.
+        // 'theme' => 'light',
+
         /*
          * Preset or inline class map.
          *
          * - 'daisyui' (default) — daisyUI 5 fieldset idiom; ships with the plugin
-         * - 'ktui' — Metronic / KTUI preset (div wrapper, no fieldset)
+         * - 'ktui' — KTUI preset (div wrapper, no fieldset)
          * - array — inline key-value overrides merged over the daisyui base
          * - null — use the daisyui default
          *
          * Inline arrays may use either the legacy flat shape or the extended
          * nested `['classMap' => [...], 'templates' => [...]]` shape — see
-         * docs/class-map.md for the full key reference.
+         * https://dereuromark.github.io/cakephp-tailwind-ui/class-map for the full key reference.
          */
         //'classMap' => 'daisyui',
         //'classMap' => 'ktui',
@@ -122,6 +125,6 @@ return [
  *   form.inputGroupContainer     Wrapper class when prepend/append is set (join w-full)
  *   form.inputGroupText          Text addon class (join-item ...)
  *
- * See docs/class-map.md for the full reference, including button, badge,
+ * See https://dereuromark.github.io/cakephp-tailwind-ui/class-map for the full reference, including button, badge,
  * alert, breadcrumbs, card, table, pagination and icon keys.
  */

@@ -1,4 +1,6 @@
 <?php
+use function Cake\Core\h;
+
 /**
  * Default layout for the TailwindUi (DaisyUI) preset.
  *
@@ -23,7 +25,6 @@ $theme = (string)(\Cake\Core\Configure::read('TailwindUi.theme') ?: 'light');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= h($this->fetch('title')) ?></title>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
     <?php
     // Prototype-only fallback (uncomment for quick start, NOT for production):
     //   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>

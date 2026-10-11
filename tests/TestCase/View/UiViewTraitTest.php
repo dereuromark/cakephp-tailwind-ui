@@ -7,6 +7,7 @@ namespace TailwindUi\Test\TestCase\View;
 use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use TailwindUi\View\UiView;
 use TestApp\View\TestUiView;
 
 class UiViewTraitTest extends TestCase
@@ -44,5 +45,19 @@ class UiViewTraitTest extends TestCase
         $view->initializeUi();
 
         $this->assertSame('TailwindUi.default', $view->getLayout());
+    }
+
+    public function testBundledLayoutsEscapeTitlesAndRenderCssBlocks(): void
+    {
+        foreach (['TailwindUi.default', 'TailwindUi.ktui'] as $layout) {
+            $view = new UiView(new ServerRequest());
+            $view->setLayout($layout);
+            $view->assign('title', '<Example>');
+            $view->assign('css', '<link href="/css/app.css" rel="stylesheet">');
+            $html = $view->renderLayout('Hello');
+            $this->assertStringContainsString('&lt;Example&gt;', $html);
+            $this->assertStringContainsString('/css/app.css', $html);
+            $this->assertStringNotContainsString('cdn.jsdelivr.net', $html);
+        }
     }
 }
