@@ -109,4 +109,18 @@ class BreadcrumbsHelperTest extends TestCase
         $result = $this->Breadcrumbs->render();
         $this->assertMatchesRegularExpression('/<a href="\/articles"[^>]*aria-current="page"/', $result);
     }
+
+    public function testContentAndLegacyTitleArraysRenderTheirText(): void
+    {
+        $this->Breadcrumbs->add([
+            ['content' => 'Articles', 'url' => '/articles'],
+            ['title' => 'Legacy article'],
+        ]);
+        $this->Breadcrumbs->prepend([['content' => 'Home', 'url' => '/']]);
+
+        $result = $this->Breadcrumbs->render();
+        $this->assertStringContainsString('>Home</a>', $result);
+        $this->assertStringContainsString('>Articles</a>', $result);
+        $this->assertStringContainsString('>Legacy article</span>', $result);
+    }
 }

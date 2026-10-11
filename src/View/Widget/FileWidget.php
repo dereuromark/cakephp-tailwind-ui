@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace TailwindUi\View\Widget;
 
 use Cake\View\Form\ContextInterface;
-use Cake\View\Widget\FileWidget as CoreFileWidget;
+use Cake\View\Widget\BasicWidget as CoreFileWidget;
 
 class FileWidget extends CoreFileWidget
 {
@@ -20,6 +20,8 @@ class FileWidget extends CoreFileWidget
      */
     public function render(array $data, ContextInterface $context): string
     {
+        $data['type'] = 'file';
+        unset($data['val']);
         $data['injectFormControl'] = false;
         $classMap = $this->_loadClassMap();
         $existing = $data['class'] ?? '';

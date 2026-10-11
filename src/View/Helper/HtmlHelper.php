@@ -160,7 +160,8 @@ class HtmlHelper extends CoreHtmlHelper
         $classes = array_filter([$base, $positionClass]);
         $options = $this->injectClasses(implode(' ', $classes), $options);
 
-        $options['data-tip'] = $escape ? h($tip) : $tip;
+        $options['data-tip'] = $tip;
+        $options['escapeAttributes'] = $escape;
 
         return $this->tag('span', $content, $options + ['escape' => false]);
     }

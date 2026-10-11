@@ -20,7 +20,7 @@ class FlashHelper extends Helper
      *
      * @var array<string, mixed>
      */
-    protected array $_defaultConfig = [
+    protected array $defaultConfig = [
         'iconMap' => [
             'default' => 'information-circle',
             'success' => 'check-circle',
@@ -41,7 +41,7 @@ class FlashHelper extends Helper
      */
     public function render(string $key = 'flash', array $options = []): ?string
     {
-        $session = $this->_View->getRequest()->getSession();
+        $session = $this->View->getRequest()->getSession();
         $messages = $session->read('Flash.' . $key);
 
         if (!$messages) {
@@ -64,7 +64,7 @@ class FlashHelper extends Helper
 
             $element = $message['element'] ?? $defaultElement;
 
-            $out .= $this->_View->element($element, [
+            $out .= $this->View->element($element, [
                 'message' => $message['message'],
                 'params' => $params,
             ]);

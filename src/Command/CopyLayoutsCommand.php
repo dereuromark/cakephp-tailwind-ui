@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace TailwindUi\Command;
 
 use Cake\Command\Command;
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Plugin;
 
@@ -33,8 +31,10 @@ class CopyLayoutsCommand extends Command
     /**
      * @inheritDoc
      */
-    public function execute(Arguments $args, ConsoleIo $io): ?int
+    public function execute(): ?int
     {
+        $args = $this->args;
+        $io = $this->io;
         $pluginTemplates = $this->sourceTemplatesPath();
         $appTemplates = $this->applicationTemplatesPath() . 'plugin' . DS . 'TailwindUi' . DS;
         $failed = false;

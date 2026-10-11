@@ -13,12 +13,12 @@ class BreadcrumbsHelper extends CoreBreadcrumbsHelper
     /**
      * @var array<string, mixed>
      */
-    protected array $_defaultConfig = [
+    protected array $defaultConfig = [
         'ariaCurrent' => 'last',
         'templates' => [
             'wrapper' => '<nav aria-label="breadcrumb"{{attrs}}><ul>{{content}}</ul></nav>',
-            'item' => '<li{{attrs}}><a href="{{url}}"{{innerAttrs}}>{{title}}</a></li>{{separator}}',
-            'itemWithoutLink' => '<li{{attrs}}><span{{innerAttrs}}>{{title}}</span></li>{{separator}}',
+            'item' => '<li{{attrs}}><a href="{{url}}"{{innerAttrs}}>{{content}}</a></li>{{separator}}',
+            'itemWithoutLink' => '<li{{attrs}}><span{{innerAttrs}}>{{content}}</span></li>{{separator}}',
             'separator' => '',
         ],
     ];
@@ -46,15 +46,15 @@ class BreadcrumbsHelper extends CoreBreadcrumbsHelper
      * @param array|string|null $url
      * @param array<string, mixed> $options
      *
-     * @return mixed
+     * @return $this
      */
-    public function add(array|string $title, array|string|null $url = null, array $options = [])
+    public function add(array|string $title, array|string|null $url = null, array $options = []): static
     {
         if (is_array($title)) {
             $crumbs = [];
             foreach ($title as $crumb) {
                 $crumbOptions = $this->_injectItemClass($crumb['options'] ?? []);
-                $crumbs[] = $crumb + ['title' => '', 'url' => null, 'options' => $crumbOptions];
+                $crumbs[] = ['content' => $crumb['content'] ?? $crumb['title'] ?? '', 'url' => $crumb['url'] ?? null, 'options' => $crumbOptions];
             }
 
             return parent::addMany($crumbs);
@@ -68,10 +68,19 @@ class BreadcrumbsHelper extends CoreBreadcrumbsHelper
      * @param array|string|null $url
      * @param array<string, mixed> $options
      *
-     * @return mixed
+     * @return $this
      */
-    public function prepend(array|string $title, array|string|null $url = null, array $options = [])
+    public function prepend(array|string $title, array|string|null $url = null, array $options = []): static
     {
+        if (is_array($title)) {
+            $crumbs = [];
+            foreach ($title as $crumb) {
+                $crumbs[] = ['content' => $crumb['content'] ?? $crumb['title'] ?? '', 'url' => $crumb['url'] ?? null, 'options' => $this->_injectItemClass($crumb['options'] ?? [])];
+            }
+
+            return parent::prependMany($crumbs);
+        }
+
         return parent::prepend($title, $url, $this->_injectItemClass($options));
     }
 
@@ -81,9 +90,9 @@ class BreadcrumbsHelper extends CoreBreadcrumbsHelper
      * @param array|string|null $url
      * @param array<string, mixed> $options
      *
-     * @return mixed
+     * @return $this
      */
-    public function insertAt(int $index, string $title, array|string|null $url = null, array $options = [])
+    public function insertAt(int $index, string $title, array|string|null $url = null, array $options = []): static
     {
         return parent::insertAt($index, $title, $url, $this->_injectItemClass($options));
     }
