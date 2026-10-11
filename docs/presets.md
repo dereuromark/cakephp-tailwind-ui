@@ -16,7 +16,7 @@ semantic component classes (`btn`, `input`, `alert`, `badge`, `card`,
 
 **Activation:** nothing to do: it's the default.
 
-**CSS setup:** see [installation.md](guide/css.md).
+**CSS setup:** see [Compile your CSS](guide/css.md).
 
 **Caveats:**
 

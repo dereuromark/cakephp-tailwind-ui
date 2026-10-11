@@ -35,13 +35,14 @@ class CopyLayoutsCommand extends Command
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
-        $pluginPath = Plugin::path('TailwindUi');
-        $appTemplates = $this->applicationTemplatesPath();
+        $pluginTemplates = $this->sourceTemplatesPath();
+        $appTemplates = $this->applicationTemplatesPath() . 'plugin' . DS . 'TailwindUi' . DS;
         $failed = false;
 
         $filesToCopy = [
-            $pluginPath . 'templates' . DS . 'layout' . DS . 'default.php' => $appTemplates . 'layout' . DS . 'default.php',
-            $pluginPath . 'templates' . DS . 'element' . DS . 'flash' . DS . 'default.php' => $appTemplates . 'element' . DS . 'flash' . DS . 'default.php',
+            $pluginTemplates . 'layout' . DS . 'default.php' => $appTemplates . 'layout' . DS . 'default.php',
+            $pluginTemplates . 'layout' . DS . 'ktui.php' => $appTemplates . 'layout' . DS . 'ktui.php',
+            $pluginTemplates . 'element' . DS . 'flash' . DS . 'default.php' => $appTemplates . 'element' . DS . 'flash' . DS . 'default.php',
         ];
 
         foreach ($filesToCopy as $source => $dest) {
@@ -51,14 +52,21 @@ class CopyLayoutsCommand extends Command
                 continue;
             }
 
-            if (!file_exists($source)) {
-                $io->error('Source file not found: ' . $source);
+            if (!is_file($source) || !is_readable($source)) {
+                $io->error('Source file missing or unreadable: ' . $source);
                 $failed = true;
 
                 continue;
             }
 
-            if (!$io->createFile($dest, (string)file_get_contents($source))) {
+            $contents = @file_get_contents($source);
+            if ($contents === false) {
+                $io->error('Could not read source file: ' . $source);
+                $failed = true;
+
+                continue;
+            }
+            if (!$io->createFile($dest, $contents)) {
                 $failed = true;
             }
         }
@@ -76,5 +84,10 @@ class CopyLayoutsCommand extends Command
     protected function applicationTemplatesPath(): string
     {
         return ROOT . DS . 'templates' . DS;
+    }
+
+    protected function sourceTemplatesPath(): string
+    {
+        return Plugin::path('TailwindUi') . 'templates' . DS;
     }
 }

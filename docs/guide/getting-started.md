@@ -33,7 +33,7 @@ To keep the application's default layout, use `$this->initializeUi(['layout' => 
 
 ## Load CSS and render a form
 
-The plugin emits class names and HTML. Its bundled layout does not load a stylesheet automatically. Add this to a template rendered by an existing controller action, such as `templates/Pages/home.php`:
+The plugin emits class names and HTML. Its bundled layout does not load a stylesheet automatically. Replace the contents of a template rendered by an existing controller action, such as `templates/Pages/home.php`, with this example. The stock CakePHP home template disables the layout; remove that call so the CSS block is rendered:
 
 ```php
 <?php

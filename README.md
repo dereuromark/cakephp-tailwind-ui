@@ -38,9 +38,9 @@ See the [screenshot gallery](https://dereuromark.github.io/cakephp-tailwind-ui/s
 | Preset | Framework | Usage |
 |--------|-----------|-------|
 | `daisyui` (default) | [DaisyUI](https://daisyui.com) | No config needed |
-| `ktui` | [KTUI/Metronic](https://keenthemes.com/metronic) | `Configure::write('TailwindUi.classMap', 'ktui')` |
+| `ktui` | [KTUI](https://ktui.io/docs) | `Configure::write('TailwindUi.classMap', 'ktui')` |
 
-Custom presets can be added by placing a PHP file in `config/class_maps/` that returns an array.
+Keep custom presets in your application and pass their returned array to `TailwindUi.classMap`; see the [preset guide](https://dereuromark.github.io/cakephp-tailwind-ui/presets#custom-preset).
 
 ## Documentation
 

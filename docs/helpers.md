@@ -396,3 +396,11 @@ For app-specific SVGs, pass path content explicitly:
 ```php
 <?= $this->Html->icon('brand', ['content' => '<path d="..." />']) ?>
 ```
+
+## Copy and customize bundled templates
+
+```bash
+bin/cake tailwind_ui copy_layouts
+```
+
+This copies both layouts and the flash element to `templates/plugin/TailwindUi/`, so changes apply while `initializeUi()` uses the plugin layout. Existing overrides are skipped. The command requires a writable templates directory and reports an error when a source or destination cannot be read or written.

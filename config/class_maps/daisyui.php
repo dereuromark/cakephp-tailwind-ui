@@ -3,6 +3,11 @@ declare(strict_types=1);
 
 return [
     'classMap' => [
+        'tooltip.top' => 'tooltip-top',
+        'tooltip.bottom' => 'tooltip-bottom',
+        'tooltip.left' => 'tooltip-left',
+        'tooltip.right' => 'tooltip-right',
+
         'form.input' => 'input w-full',
         'form.select' => 'select w-full',
         'form.textarea' => 'textarea w-full',

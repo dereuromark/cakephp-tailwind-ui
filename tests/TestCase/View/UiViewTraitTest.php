@@ -47,7 +47,7 @@ class UiViewTraitTest extends TestCase
         $this->assertSame('TailwindUi.default', $view->getLayout());
     }
 
-    public function testBundledLayoutsEscapeTitlesWithoutGlobalFunctions(): void
+    public function testBundledLayoutsEscapeTitlesAndRenderCssBlocks(): void
     {
         foreach (['TailwindUi.default', 'TailwindUi.ktui'] as $layout) {
             $view = new UiView(new ServerRequest());

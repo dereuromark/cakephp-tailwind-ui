@@ -215,10 +215,10 @@ Available placeholders inside container templates: `{{content}}`,
 
 ## Adding a custom preset
 
-Create `config/class_maps/mypreset.php` in the plugin directory (or in your
-app if you use a loader). Any keys you don't set fall back to the DaisyUI
-defaults. Activate it:
+Keep `config/class_maps/mypreset.php` in your application and have it return a class-map array. Keys you omit fall back to DaisyUI defaults. Activate the array before helpers load:
 
 ```php
-Configure::write('TailwindUi.classMap', 'mypreset');
+\Cake\Core\Configure::write('TailwindUi.classMap', require CONFIG . 'class_maps/mypreset.php');
 ```
+
+Named presets resolve only inside the plugin's `config/class_maps/` directory. An unknown name falls back to DaisyUI; it does not load application files. See [Custom presets](presets.md#custom-preset) for a complete example.

@@ -2,7 +2,7 @@
 
 Examples of the default DaisyUI preset rendered in a CakePHP application.
 
-### Form controls
+## Form controls
 
 All input types via `$this->Form->control()`: text, email, password, number,
 url, tel, date, datetime, time, color, range, textarea, select, multi-select,
@@ -11,52 +11,52 @@ validation errors, and horizontal layout are shown.
 
 ![Form controls](screenshots/daisyui-forms.png)
 
-### Buttons
+## Buttons
 
 All variants via `$this->Form->submit(text, ['class' => 'primary'])` and
 static HTML buttons for reference.
 
 ![Buttons](screenshots/daisyui-buttons.png)
 
-### Flash messages
+## Flash messages
 
 `$this->Flash->render()` with `alert-success`, `alert-error`, `alert-warning`,
 `alert-info` mapping.
 
 ![Alerts](screenshots/daisyui-alerts.png)
 
-### Pagination
+## Pagination
 
 `$this->Paginator->links()` with DaisyUI `join` container.
 
 ![Pagination](screenshots/daisyui-pagination.png)
 
-### Breadcrumbs
+## Breadcrumbs
 
 `$this->Breadcrumbs->render()` using DaisyUI's `breadcrumbs` component.
 
 ![Breadcrumbs](screenshots/daisyui-breadcrumbs.png)
 
-### Badges
+## Badges
 
 `$this->Html->badge(text, ['class' => 'primary'])` with color, outline,
 and size variants.
 
 ![Badges](screenshots/daisyui-badges.png)
 
-### Cards
+## Cards
 
 Card layouts used in the bake templates.
 
 ![Cards](screenshots/daisyui-cards.png)
 
-### Tables
+## Tables
 
 Zebra-striped tables with badges inside cells.
 
 ![Tables](screenshots/daisyui-tables.png)
 
-### CRUD pages
+## CRUD pages
 
 Users index: paginated table with role and active badges:
 

@@ -2,19 +2,19 @@
 use function Cake\Core\h;
 
 /**
- * Default layout for the KTUI (Metronic) preset.
+ * Default layout for the KTUI preset.
  *
  * Activate with:
  *   Configure::write('TailwindUi.classMap', 'ktui');
  *
  * Expects a compiled Tailwind CSS bundle at /css/app.css (or similar)
- * that includes Metronic's KTUI component library. Override by copying
+ * that includes the KTUI component library. Override by copying
  * this file into your app's templates/layout/ directory.
  *
  * @var \Cake\View\View $this
  */
 $theme = (string)(\Cake\Core\Configure::read('TailwindUi.theme') ?: 'light');
-// KTUI/Metronic uses a `dark` class on <html> for dark mode (Tailwind's class strategy),
+// KTUI uses a `dark` class on <html> for dark mode (Tailwind's class strategy),
 // distinct from DaisyUI's data-theme attribute. Both layouts read the same TailwindUi.theme
 // config so apps can flip preset without re-wiring their dark-mode toggle.
 $darkClass = $theme === 'dark' ? ' dark' : '';

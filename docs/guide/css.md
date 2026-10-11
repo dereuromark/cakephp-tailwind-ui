@@ -14,7 +14,9 @@ Create `src/css/app.css`:
 
 ```css
 @import "tailwindcss";
-@plugin "daisyui";
+@plugin "daisyui" {
+  themes: light --default, dark --prefersdark, cupcake;
+}
 @source "../../templates";
 @source "../../vendor/dereuromark/cakephp-tailwind-ui";
 ```
@@ -42,3 +44,15 @@ The layout outputs that block in `<head>`. An application layout can instead cal
 If you emit classes dynamically from database values, add the allowed complete class names to a scanned source file or use Tailwind's documented explicit source rules. Tailwind cannot infer classes assembled from string fragments.
 
 See [Tailwind's source detection documentation](https://tailwindcss.com/docs/detecting-classes-in-source-files) and the [official DaisyUI installation guide](https://daisyui.com/docs/install/). For KTUI's CSS and JavaScript, see [Presets](../presets.md#ktui-metronic).
+
+## Select a theme
+
+The bundled DaisyUI layout reads `TailwindUi.theme` and emits it as `data-theme` on the HTML element. The default is `light`. Set the theme before rendering:
+
+```php
+\Cake\Core\Configure::write('TailwindUi.theme', 'cupcake');
+```
+
+Include that theme in the compiled CSS, as the example above does. DaisyUI's default plugin configuration includes only light and dark; removing the former external `themes.css` request means additional themes must be compiled explicitly. See [DaisyUI's theme configuration](https://daisyui.com/docs/themes/).
+
+For KTUI, the same setting selects its dark class only when the value is `dark`. Other theme names do not select a KTUI theme.
