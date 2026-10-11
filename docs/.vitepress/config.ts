@@ -13,7 +13,6 @@ export default defineConfig({
       { text: 'Installation', link: '/installation' },
       { text: 'Getting started', link: '/guide/getting-started' },
       { text: 'Helpers', link: '/helpers' },
-      { text: 'Plugins', link: 'https://dereuromark.github.io/' },
     ],
     sidebar: [{ text: 'TailwindUi plugin', items: [
       { text: 'Installation', link: '/installation' },
