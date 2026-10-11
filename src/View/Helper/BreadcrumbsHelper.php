@@ -46,7 +46,7 @@ class BreadcrumbsHelper extends CoreBreadcrumbsHelper
      * @param array|string|null $url
      * @param array<string, mixed> $options
      *
-     * @return $this
+     * @return static
      */
     public function add(array|string $title, array|string|null $url = null, array $options = []): static
     {
@@ -68,7 +68,7 @@ class BreadcrumbsHelper extends CoreBreadcrumbsHelper
      * @param array|string|null $url
      * @param array<string, mixed> $options
      *
-     * @return $this
+     * @return static
      */
     public function prepend(array|string $title, array|string|null $url = null, array $options = []): static
     {
@@ -90,7 +90,7 @@ class BreadcrumbsHelper extends CoreBreadcrumbsHelper
      * @param array|string|null $url
      * @param array<string, mixed> $options
      *
-     * @return $this
+     * @return static
      */
     public function insertAt(int $index, string $title, array|string|null $url = null, array $options = []): static
     {
